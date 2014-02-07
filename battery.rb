@@ -1,27 +1,16 @@
 class Battery
-  def fire(ship)
-    
+  def initialize(ship)
+    @ship = ship
+    @ship.ship << this
   end
   
-  def to_hit
-    raise "Not implemented"
+  def fire(target)
   end
-  
+
   def roll(n=2)
     sum = 0
     n.times { sum += rand(6) + 1 }
     sum
-  end
-  
-  def standard_dms_to_hit(target)
-    total = relative_computer_size(target) 
-    total -= target.agility_rating 
-    total -= size_modifiers(target)
-  end
-  
-  def relative_computer_size(target)
-    # This will need to refer to a variable which stores the identity of the 
-    # ship the battery is attached to
   end
   
   def size_modifiers(target)
@@ -36,6 +25,16 @@ class Battery
       return 2
     end
   end    
+
+  def standard_dms_to_hit(target)
+    total = @ship.relative_computer_size 
+    total -= target.agility_rating 
+    total += size_modifiers(target)
+  end
+
+  def to_hit
+    raise "Not implemented"
+  end  
 end
 
 class MissileAttack < Battery
@@ -78,4 +77,3 @@ class ParticleAccelerator < Battery
     attack_table + standard_dms_to_hit
   end
 end
-

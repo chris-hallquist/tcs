@@ -1,5 +1,5 @@
 class Ship
-  attr_reader :agility_rating, :size
+  attr_accessor :agility_rating, :size, :batteries
 end
 
 
