@@ -1,7 +1,7 @@
 class Battery
   attr_accessor :ship, :factor
   
-  CRITICAL_HIT_TABLE = {
+  CRIT_TABLE = {
     2 => "Ship Vaporized",
     3 => "Bridge Destroyed",
     4 => "Computer Destroyed",
@@ -13,6 +13,37 @@ class Battery
     10 => "Crew-1",
     11 => "Spinal Mount/Fire Control Out",
     12 => "Frozen Watch/Ship's Troops Dead"
+  }
+  
+  INTERIOR_EXP_TABLE = {
+    2 => [:critical],
+    3 => [:interior_explosion],
+    4 => [:interior_explosion],
+    5 => [:interior_explosion],
+    6 => [:maneuver, 2],
+    7 => [:fuel, 2],
+    8 => [:weapon, 3],
+    9 => [:maneuver, 1],
+    10 => [:fuel, 2],
+    11 => [:weapon, 2],
+    12 => [:maneuver, 1],
+    13 => [:fuel, 1],
+    14 => [:weapon, 1],
+    15 => [:weapon, 1],
+    16 => [:fuel, 1],
+    17 => [:weapon, 1],
+    18 => [:weapon, 1],
+    19 => [:fuel, 1],
+    20 => [:weapon, 1],
+    21 => [:weapon, 1]
+  }
+  
+  RADIATION_TABLE = {
+    
+  }
+  
+  SURFACE_EXP_TABLE = {
+    
   }
   
   def initialize(ship, factor)
