@@ -82,8 +82,8 @@ class Battery
   end    
 
   def standard_dms_to_hit(target)
-    total = @ship.relative_computer_size 
-    total -= target.agility_rating 
+    total = @ship.comp 
+    total -= target.agility
     total += size_modifiers(target)
   end
 
