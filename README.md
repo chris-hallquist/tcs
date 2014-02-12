@@ -4,6 +4,8 @@ I'm currently still in the "translate Traveller's rules into Ruby code" stage. T
 
 I plan to write the code in a way that assumes the rules of the original 1981 tournament, which stated:
 
->The maximum allowed tech level for all ships is 12. The total pilot allowance for the squadron is 200. The squadron must be capable of jump-3; each ship and small craft must be capable of 1-G acceleration. The squadron must be capable of gas giant refueling.
+>Battle will be to the death: whichever player has the last ship capable of firing will be declared the winner of the round...
+
+>...The maximum allowed tech level for all ships is 12. The total pilot allowance for the squadron is 200. The squadron must be capable of jump-3; each ship and small craft must be capable of 1-G acceleration. The squadron must be capable of gas giant refueling.
 
 >*(Source: Game Designers' Workshop. Adventure 5: Trillion Credit Squadron. p. 30.)
