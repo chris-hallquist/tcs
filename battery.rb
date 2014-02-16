@@ -1,3 +1,5 @@
+require './ship'
+
 class Battery
   attr_accessor :ship, :factor
   

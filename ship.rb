@@ -1,42 +1,55 @@
 require 'set'
 
 class Ship
-  attr_accessor :agility, :batteries, :comp, :config
-  
-  HULL_PRICE_MULTIPLIERS = [
-    nil,
-    120_000, 
-    110_000, 
-    100_000, 
-    60_000, 
-    70_000, 
-    80_000, 
-    50_000,
-    900,
-    750
-    ]
-  
-  def initialize(options={})
-    @aux_bridge = options[:aux_bridge]
-    @comp = options[:comp]
-    @comp_type = options[:comp_type]
-    @config = options[:config]
-    @drop_tanks = options[:drop_tanks]
-    @jump = options[:jump]
-    @jump_fuel = options[:jump_fuel]
-    @maneuver = options[:maneuver]
-    @power = options[:power]
-    @scoops = options[:scoops]
-    @tons = options[:tons]
-    status = {}
+  attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapons
+  attr_accessor :energy_weapon_count, :fighters, :jump, :lasers, :laser_count
+  attr_accessor :maneuver, :meson_gun, :meson_gun_count, :meson_screen
+  attr_accessor :meson_screen_count, :missiles, :missle_count, :nuc_damp
+  attr_accessor :nuc_damp_count, :particle_acc, :particle_acc_count
+  attr_accessor :force_field, :force_field_count, :power,  :repulsors 
+  attr_accessor :repulsor_count, :sand, :sand_count, :status, :tons
+    
+  def initialize(usp, batteries, drop_tanks, tons)
+    # TODO: Auxillary bridge, scoops
+    @armor = usp[11]
+    @comp = usp[8]
+    @config = usp[4]
+    @crew_code = usp[9]
+    @drop_tanks = drop_tanks
+    @energy_weapons = usp[19]
+    @energy_weapon_count = batteries[7]
+    @figters = usp[24]
+    @jump = usp[5].to_i
+    @lasers = usp[18]
+    @laser_count = batteries[6]
+    @maneuver = usp[6].to_i
+    @meson_gun = usp[21]
+    @meson_gun_count = batteries[9]
+    @meson_screen = usp[13]
+    @meson_screen_count = batteries[1]
+    @missiles = usp[22]
+    @missile_count = batteries[10]
+    @nuc_damp = usp[14]
+    @nuc_damp_count = batteries[2]
+    @particle_acc = usp[20]
+    @particle_acc_count = batteries[8]
+    @force_field = usp[15]
+    @force_field_count = batteries[3]
+    @power = Ship.read_usp(usp[7])
+    @repulsors = usp[16]
+    @repulsor_count = batteries[4]
+    @sand = usp[12]
+    @sand_count = batteries[0]
+    @status = {}
+    @tons = tons
   end
   
   def bridge_cost
-    5_000 * @tons * (1 + @aux_bridge)
+    5_000 * @tons
   end
   
   def bridge_tons
-    [20, @tons * 0.02].max * (1 + @aux_bridge)
+    [20, @tons * 0.02].max
   end
   
   def comp_cost
@@ -47,9 +60,16 @@ class Ship
     else
       [0, 2, 9, 18, 30, 45, 55, 80, 110, 140][@comp] * 1_000_000
     end
+  end
+  
+  def comp_bis?
+  end
   
   def comp_energy
     [0, 0, 0, 1, 2, 3, 5, 7, 9, 12][@comp]
+  end
+  
+  def comp_fib?
   end
   
   def comp_tons
@@ -66,7 +86,7 @@ class Ship
   end
   
   def hull_cost
-    @tons * HULL_PRICE_MULTIPLIERS[@config]
+    @tons * 10_000 * [0, 12, 11, 10, 6, 7, 8, 5, 0.09, 0.075][@config]
   end
   
   def jump_cost
@@ -74,7 +94,11 @@ class Ship
   end
   
   def jump_tons
-    @jump > 0 ? @tons * (@jump + 1) / 100.0 + @jump_fuel : 0
+    @jump > 0 ? @tons * (@jump + 1) / 100.0 : 0
+  end
+  
+  def jump_with_tanks
+    (100.0 * jump_tons / tons_with_tanks).to_i - 1
   end
   
   def maneuver_cost
@@ -92,12 +116,20 @@ class Ship
     @tons * (@maneuver * 3 - 1) * 0.01
   end
   
+  def maneuver_with_tanks
+    ((100.0 * maneuver_tons / tons_with_tanks + 1) / 3).to_i
+  end
+  
   def power_cost
     power_tons * 3_000_000
   end
   
   def power_tons
-    @tons * @power * 4 / 100.0 # Includes fuel
+    @tons * @power * 3 / 100.0
+  end
+  
+  def power_with_tanks
+    (100.0 * power_tons / tons_with_tanks / 3).to_i
   end
   
   def scoops_cost
@@ -128,8 +160,29 @@ class Ship
     end
   end
   
-  def validate_jump_fuel
-    (@jump_fuel + @drop_tanks) >= (@tons + @drop_tanks) * @jump / 10.0
+  def tons_with_tanks
+    @tons_with_tanks ||= @tons + @drop_tanks
+  end
+  
+  def valid_fuel?
+    # TODO: Fix to remove @jump_fuel
+    # (@jump_fuel + @drop_tanks) >= (@tons + @drop_tanks) * @jump / 10.0
+  end
+  
+  def self.read_usp(code)
+    @usp_hash ||= {}
+    @usp_hash[code] ||= self.usp_codes.index(code)
+  end
+  
+  def self.usp_codes
+    @usp_codes ||= usp_codes!
+  end
+  
+  def self.usp_codes!
+    usp_codes = ("0".."9").to_a + ("A".."Z").to_a
+    usp_codes.delete("I")
+    usp_codes.delete("O")
+    usp_codes
   end
 end
 
@@ -137,5 +190,11 @@ class SmallCraft < Ship
   def initialize(options={})
     super(options)
     @jump = 0 # Small craft don't have jump drives
+  end
+end
+
+class Eurisko < Ship
+  def initialize
+    super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 11_100)
   end
 end
