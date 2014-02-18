@@ -63,3 +63,19 @@ An interesting feature of [Lenat's winning fleet](http://members.pcug.org.au/~da
 Drop tanks would have been a significantly cheaper way to meet the fuel requirements for jumps because they only cost 10,000 credits + 1,000 credit per ton. In contrast, space within a ship's main hull costs tens of thousands of credits per ton (with the exact number depending on hull configuration). Drop tanks had considerable disadvantages to balance this reduced cost, but those disadvantages appear to have been ignored in the TCS tournament, making the ship design strategy used by Lenat/EURISKO clearly a winning one (though they could have gotten by with slightly smaller drop tanks). Therefore, one important test in the machine learning stage of this project will be to see if the algorithms can independently re-discover this strategy.
 
 The advantages of using drop tanks are substantial enough on their own that I will assume they cannot be voluntarily jettisoned during combat, and that their mass still counts towards total ship mass after being destroyed in combat.
+
+# Crew Requirements
+
+Crew requirement rules seem rather needlessly complicated, given how little role the crew serves in the TCS scenario. Therefore, largely for my own benefit, I've tried to summarize the relevant rules below:
+
+## Small Craft
+
+Small (military) craft are assumed to have a crew size of two: one pilot and one gunner.
+
+## Non-Small Craft <= 1000 Tons
+
+TODO
+
+## Ships > 1000 Tons
+
+TODO

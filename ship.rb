@@ -9,9 +9,10 @@ class Ship
   attr_accessor :force_field, :force_field_count, :power,  :repulsors 
   attr_accessor :repulsor_count, :sand, :sand_count, :status, :tons
     
-  def initialize(usp, batteries, drop_tanks, tons)
+  def initialize(usp, batteries, drop_tanks, fuel, tons)
     # TODO: Auxillary bridge, scoops
     @armor = usp[11]
+    @cargo = cargo
     @comp = usp[8]
     @config = usp[4]
     @crew_code = usp[9]
@@ -19,6 +20,7 @@ class Ship
     @energy_weapons = usp[19]
     @energy_weapon_count = batteries[7]
     @figters = usp[24]
+    @fuel = fuel
     @jump = usp[5].to_i
     @lasers = usp[18]
     @laser_count = batteries[6]
@@ -52,6 +54,9 @@ class Ship
     [20, @tons * 0.02].max
   end
   
+  def commanding_officers
+  end
+  
   def comp_cost
     if @comp_type == :fib
       [0, 3, 14, 27, 45, 68, 83, 100, 140, 200][@comp] * 1_000_000
@@ -70,6 +75,18 @@ class Ship
   end
   
   def comp_fib?
+  end
+  
+  def crew
+    # Includes commanding officers, so space/cost equations count them double
+  end
+  
+  def crew_space_cost
+    (commmanding_officers + crew) * 500_000
+  end
+  
+  def crew_space_tons
+    (commmanding_officers + crew) * 4
   end
   
   def comp_tons
@@ -160,8 +177,12 @@ class Ship
     end
   end
   
+  def small_craft?
+    @tons < 100 && @jump == 0
+  end
+  
   def tons_with_tanks
-    @tons_with_tanks ||= @tons + @drop_tanks
+    @tons + @drop_tanks
   end
   
   def valid_fuel?
@@ -186,15 +207,20 @@ class Ship
   end
 end
 
-class SmallCraft < Ship
-  def initialize(options={})
-    super(options)
-    @jump = 0 # Small craft don't have jump drives
+class Eurisko < Ship
+  def initialize
+    super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 555, 11_100)
   end
 end
 
-class Eurisko < Ship
+class Wasp < Ship
   def initialize
-    super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 11_100)
+    super("Il-A90ZZF2-J00000-00009-0", "          1", 0, 60, 1_000)
+  end
+end
+
+class Bee < Ship
+  def initialize
+    super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99)
   end
 end
