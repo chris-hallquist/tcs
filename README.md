@@ -66,7 +66,7 @@ The advantages of using drop tanks are substantial enough on their own that I wi
 
 # Crew Requirements
 
-Crew requirement rules seem rather needlessly complicated, given how little role the crew serves in the TCS scenario. Therefore, largely for my own benefit, I've tried to summarize the relevant rules below:
+Crew requirement rules seem rather needlessly complicated, given how little role the crew serves in the TCS scenario. Therefore, largely for my own benefit, I've tried to summarize the relevant rules below. Question marks indicate issues where the rules appear unclear to me.
 
 ## Small Craft
 
@@ -74,8 +74,12 @@ Small (military) craft are assumed to have a crew size of two: one pilot and one
 
 ## Non-Small Craft <= 1000 Tons
 
-TODO
+These ships must have a pilot and one gunner per turret (battery?). Ships of 200 tons or more must have a navigator and a medic, as well as one engineer per 35 tons of power plant.
 
-## Ships > 1000 Tons
+## Craft > 1000 Tons
 
-TODO
+These ships will have at least three section heads requiring staterooms. If the ship has any launched craft, there will be a section head for the flight section. If the ship carries troops, the commander of the ship's troops counts as a section head for purposes of necessary crew quarters.
+
+In terms of total crew, all ships over 1000 tons have will have a command section of at least six people (plus support personnel?—the rules are unclear). For ships over 20,000 tons, this increases to 5 crewmembers per 10,000 tons of ship (rounding?)
+
+Engineering section will have one crewmember per 100 tons of drives. Gunnery section will have one crew per 100 tons of major weapon, two per bay weapon, one per turret battery, and four per screen. If the ship has launched craft, this requires one crewmember plus one per craft plus crew for craft.

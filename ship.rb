@@ -12,7 +12,6 @@ class Ship
   def initialize(usp, batteries, drop_tanks, fuel, tons)
     # TODO: Auxillary bridge, scoops
     @armor = usp[11]
-    @cargo = cargo
     @comp = usp[8]
     @config = usp[4]
     @crew_code = usp[9]
@@ -21,20 +20,20 @@ class Ship
     @energy_weapon_count = batteries[7]
     @figters = usp[24]
     @fuel = fuel
-    @jump = usp[5].to_i
+    @jump = Ship.read(usp[5])
     @lasers = usp[18]
     @laser_count = batteries[6]
-    @maneuver = usp[6].to_i
-    @meson_gun = usp[21]
-    @meson_gun_count = batteries[9]
+    @maneuver = Ship.read(usp[6])
+    @meson_gun = Ship.read_usp(usp[21])
+    @meson_gun_count = Ship.read_usp(batteries[9])
     @meson_screen = usp[13]
     @meson_screen_count = batteries[1]
     @missiles = usp[22]
     @missile_count = batteries[10]
     @nuc_damp = usp[14]
     @nuc_damp_count = batteries[2]
-    @particle_acc = usp[20]
-    @particle_acc_count = batteries[8]
+    @particle_acc = Ship.read_usp(usp[20])
+    @particle_acc_count = Ship.read_usp(batteries[8])
     @force_field = usp[15]
     @force_field_count = batteries[3]
     @power = Ship.read_usp(usp[7])
@@ -52,9 +51,6 @@ class Ship
   
   def bridge_tons
     [20, @tons * 0.02].max
-  end
-  
-  def commanding_officers
   end
   
   def comp_cost
@@ -78,15 +74,15 @@ class Ship
   end
   
   def crew
-    # Includes commanding officers, so space/cost equations count them double
+    # Includes officers, so space/cost equations count them double
   end
   
   def crew_space_cost
-    (commmanding_officers + crew) * 500_000
+    (crew + sec_heads) * 500_000
   end
   
   def crew_space_tons
-    (commmanding_officers + crew) * 4
+    (crew + sec_heads) * 4
   end
   
   def comp_tons
@@ -118,6 +114,10 @@ class Ship
     (100.0 * jump_tons / tons_with_tanks).to_i - 1
   end
   
+  def major_weapon_tons
+    if 
+  end
+  
   def maneuver_cost
     if @maneuver == 1
       multiplier = 1_500_000
@@ -137,6 +137,49 @@ class Ship
     ((100.0 * maneuver_tons / tons_with_tanks + 1) / 3).to_i
   end
   
+  def particle_acc_tons
+    if @particle_acc > 9
+      return [5_500, 
+              5_000, 
+              4_500, 
+              4_000, 
+              3_500, 
+              2_500, 
+              2_500, 
+              5_000,
+              4_500,
+              4_000, 
+              3_500,
+              3_000,
+              2_500,
+              4_500,
+              4_000,
+              3_500,
+              3_000][@particle_acc - 10]
+    elsif @meson_gun > 9
+      return [5_000,
+              8_000,
+              2_000,
+              5_000,
+              1_000,
+              2_000,
+              1_000,
+              2_000,
+              1_000,
+              8_000,
+              5_000,
+              4_000,
+              2_000,
+              8_000,
+              7_000,
+              5_000,
+              8_000,
+              7_000][@meson_gun - 10]
+    else
+      return 0
+    end
+  end
+  
   def power_cost
     power_tons * 3_000_000
   end
@@ -151,6 +194,9 @@ class Ship
   
   def scoops_cost
     @scoops ? @tons * 1_000 : 0
+  end
+  
+  def sec_heads
   end
   
   def size
@@ -215,7 +261,7 @@ end
 
 class Wasp < Ship
   def initialize
-    super("Il-A90ZZF2-J00000-00009-0", "          1", 0, 60, 1_000)
+    super("Il-A9066F2-J00000-00009-0", "          1", 0, 60, 1_000)
   end
 end
 
