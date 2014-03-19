@@ -10,7 +10,7 @@ class Ship
   attr_accessor :repulsor_count, :sand, :sand_count, :status, :tons
     
   def initialize(usp, batteries, drop_tanks, fuel, tons)
-    # TODO: Auxillary bridge, scoops
+    # TODO: Auxillary bridge, frozen watch, scoops, troops
     @armor = usp[11]
     @comp = usp[8]
     @config = usp[4]
@@ -20,10 +20,11 @@ class Ship
     @energy_weapon_count = batteries[7]
     @figters = usp[24]
     @fuel = fuel
-    @jump = Ship.read(usp[5])
+    @hits = {}
+    @jump = Ship.read_usp(usp[5])
     @lasers = usp[18]
     @laser_count = batteries[6]
-    @maneuver = Ship.read(usp[6])
+    @maneuver = Ship.read_usp(usp[6])
     @meson_gun = Ship.read_usp(usp[21])
     @meson_gun_count = Ship.read_usp(batteries[9])
     @meson_screen = usp[13]
@@ -68,6 +69,22 @@ class Ship
   
   def comp_energy
     [0, 0, 0, 1, 2, 3, 5, 7, 9, 12][@comp]
+  end
+  
+  def comp_model
+    @comp_model ||= comp_model!
+  end
+  
+  def comp_model!
+    if comp == 'R'
+      @comp_model = 1 
+    elsif comp == 'S'
+      @comp_model = 2
+    else
+      @comp_model = Ship.read_usp(comp) % 9
+      @comp_model = 9 if @comp_model == 0
+    end
+    @comp_model
   end
   
   def comp_fib?
@@ -115,7 +132,6 @@ class Ship
   end
   
   def major_weapon_tons
-    if 
   end
   
   def maneuver_cost

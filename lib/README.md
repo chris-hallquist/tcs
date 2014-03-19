@@ -83,3 +83,25 @@ These ships will have at least three section heads requiring staterooms. If the 
 In terms of total crew, all ships over 1000 tons have will have a command section of at least six people (plus support personnel?—the rules are unclear). For ships over 20,000 tons, this increases to 5 crewmembers per 10,000 tons of ship (rounding?)
 
 Engineering section will have one crewmember per 100 tons of drives. Gunnery section will have one crew per 100 tons of major weapon, two per bay weapon, one per turret battery, and four per screen. If the ship has launched craft, this requires one crewmember plus one per craft plus crew for craft.
+
+# AI Design
+
+Two AIs need to be written: an AI to design fleets, and an AI to play the actual game. The hard part of TCS seems to be fleet design, but the fleet design AI needs the player AI to run simulated battles, and flaws in the second AI may lead to fleets being tailored to its flaws, rather than an optimal fleet.
+
+## Fleet Design AI
+
+Synergies between different ship types are unclear, and the overwhelming majority of Lenat's winning fleet consisted of a single ship type. Therefore, first tests will assume fleets of identical ships.
+
+## Game AI
+
+While decisions made playing the game may not be as complicated as fleet design decisions, it's still not entirely clear what the optimal strategy is. However, it seems likely that the best strategy would divide fire evenly among those ships still able to fight. 
+
+All shots against a given ship must be declared before any are resolved, so concentrating fire on one ship risks wasting shots. Also, many damage effects either directly reduce a ship's effectiveness, or take it out of the fight entirely in a single shot. This is in contrast to other game systems, where units retain full combat effectiveness until they reach 0 hit points (a rule that greatly rewards concentrating fire). 
+
+It is unclear how useful making repairs mid-combat is, so this will be reserved for ships not able to fight.
+
+# Ignored Rules
+
+Some rules seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
+
+* Boarding and ship's troops
