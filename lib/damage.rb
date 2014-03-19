@@ -4,10 +4,16 @@ require 'TCS'
 class Damage
   def self.bridge_destroyed(ship)
     # Critical only
+    # Handle effects elsewhere
+    ship.hits[:bridge_destroyed] = true
   end
 
   def self.computer(ship, n)
     # Can be repaired
+    n = ship.computer_model if ship.computer_model < n
+    ship.computer_mode -= n
+    ship.hits[:computer] ||= []
+    ship.hits[:computer] << n
   end
   
   def self.computer_destroyed(ship, n)

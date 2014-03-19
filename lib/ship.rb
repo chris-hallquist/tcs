@@ -8,6 +8,7 @@ class Ship
   attr_accessor :nuc_damp_count, :particle_acc, :particle_acc_count
   attr_accessor :force_field, :force_field_count, :power,  :repulsors 
   attr_accessor :repulsor_count, :sand, :sand_count, :status, :tons
+  attr_accessor :hits
     
   def initialize(usp, batteries, drop_tanks, fuel, tons)
     # TODO: Auxillary bridge, frozen watch, scoops, troops
@@ -56,19 +57,24 @@ class Ship
   
   def comp_cost
     if @comp_type == :fib
-      [0, 3, 14, 27, 45, 68, 83, 100, 140, 200][@comp] * 1_000_000
+      [0, 3, 14, 27, 45, 68, 83, 100, 140, 200][comp_model] * 1_000_000
     elsif @comp_type == :bis
-      [0, 4, 18][@comp] * 1_000_000
+      [0, 4, 18][comp_model] * 1_000_000
     else
-      [0, 2, 9, 18, 30, 45, 55, 80, 110, 140][@comp] * 1_000_000
+      [0, 2, 9, 18, 30, 45, 55, 80, 110, 140][comp_model] * 1_000_000
     end
   end
   
   def comp_bis?
+    comp == 'R' || comp == 'S'
   end
   
   def comp_energy
-    [0, 0, 0, 1, 2, 3, 5, 7, 9, 12][@comp]
+    [0, 0, 0, 1, 2, 3, 5, 7, 9, 12][comp_model]
+  end
+  
+  def comp_fib?
+    @comp_fib ||= ('A'..'J').include?(comp)
   end
   
   def comp_model
@@ -85,9 +91,6 @@ class Ship
       @comp_model = 9 if @comp_model == 0
     end
     @comp_model
-  end
-  
-  def comp_fib?
   end
   
   def crew
