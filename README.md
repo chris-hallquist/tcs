@@ -105,3 +105,5 @@ It is unclear how useful making repairs mid-combat is, so this will be reserved 
 Some rules seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
 
 * Boarding and ship's troops
+
+Rules for carried craft will not be implemented until I begin exploring heterogenous fleets.

@@ -1,56 +1,9 @@
-require './ship'
+require './lib/ship'
 
 class Battery
-  attr_accessor :ship, :factor
+  attr_accessor :factor
   
-  CRIT_TABLE = {
-    2 => "Ship Vaporized",
-    3 => "Bridge Destroyed",
-    4 => "Computer Destroyed",
-    5 => "Maneuver Drive Destroyed",
-    6 => "One Screen Disabled",
-    7 => "Jump Drive Disabled",
-    8 => "Hangar/Boat Deck Destoyed",
-    9 => "Power Plant Disabled",
-    10 => "Crew-1",
-    11 => "Spinal Mount/Fire Control Out",
-    12 => "Frozen Watch/Ship's Troops Dead"
-  }
-  
-  INTERIOR_EXP_TABLE = {
-    2 => [:critical],
-    3 => [:interior_explosion],
-    4 => [:interior_explosion],
-    5 => [:interior_explosion],
-    6 => [:maneuver, 2],
-    7 => [:fuel, 2],
-    8 => [:weapon, 3],
-    9 => [:maneuver, 1],
-    10 => [:fuel, 2],
-    11 => [:weapon, 2],
-    12 => [:maneuver, 1],
-    13 => [:fuel, 1],
-    14 => [:weapon, 1],
-    15 => [:weapon, 1],
-    16 => [:fuel, 1],
-    17 => [:weapon, 1],
-    18 => [:weapon, 1],
-    19 => [:fuel, 1],
-    20 => [:weapon, 1],
-    21 => [:weapon, 1]
-  }
-  
-  RADIATION_TABLE = {
-    
-  }
-  
-  SURFACE_EXP_TABLE = {
-    
-  }
-  
-  def initialize(ship, factor)
-    @ship = ship
-    @ship.batteries << this
+  def initialize(factor)
     @factor = factor
   end
   
@@ -101,6 +54,26 @@ class BeamWeapon < Battery
 end
 
 class MesonGun < Battery
+  def tons    
+    return [5_000,
+            8_000,
+            2_000,
+            5_000,
+            1_000,
+            2_000,
+            1_000,
+            2_500,
+            1_000,
+            8_500,
+            5_000,
+            4_000,
+            2_000,
+            8_000,
+            7_000,
+            5_000,
+            8_000,
+            7_000][factor - 10]
+  end
 end
 
 class ParticleAccelerator < Battery
@@ -135,6 +108,33 @@ class ParticleAccelerator < Battery
   
   def spinal?
     factor.is_a? String
+  end
+  
+  def tons
+    if factor == 4
+      return 50
+    elsif factor == 8
+      return 100
+    elsif factor > 9
+      return [5_500,
+              5_000,
+              4_500,
+              4_000,
+              3_500,
+              3_000,
+              2_500,
+              2_500,
+              5_000,
+              4_500,
+              4_000,
+              3_500,
+              3_000,
+              2_500,
+              4_500,
+              4_000,
+              3_500,
+              3000][factor - 10]
+    end
   end
   
   def to_hit(target)

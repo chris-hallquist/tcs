@@ -1,50 +1,64 @@
 require 'set'
+require './lib/battery'
 
 class Ship
   attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapons
   attr_accessor :energy_weapon_count, :fighters, :jump, :lasers, :laser_count
   attr_accessor :maneuver, :meson_gun, :meson_gun_count, :meson_screen
-  attr_accessor :meson_screen_count, :missiles, :missle_count, :nuc_damp
+  attr_accessor :meson_screen_count, :missiles, :missile_count, :nuc_damp
   attr_accessor :nuc_damp_count, :particle_acc, :particle_acc_count
   attr_accessor :force_field, :force_field_count, :power,  :repulsors 
-  attr_accessor :repulsor_count, :sand, :sand_count, :status, :tons
+  attr_accessor :repulsor_count, :sand, :sand_count, :tons
   attr_accessor :hits
     
   def initialize(usp, batteries, drop_tanks, fuel, tons)
     # TODO: Auxillary bridge, frozen watch, scoops, troops
-    @armor = usp[11]
-    @comp = usp[8]
-    @config = usp[4]
-    @crew_code = usp[9]
+    @armor = Ship.read_usp(usp[11])
+    @comp = Ship.read_usp(usp[8])
+    @config = Ship.read_usp(usp[4])
+    @crew_code = Ship.read_usp(usp[9])
     @drop_tanks = drop_tanks
-    @energy_weapons = usp[19]
-    @energy_weapon_count = batteries[7]
-    @figters = usp[24]
+    @energy_weapons = Ship.read_usp(usp[19])
+    @energy_weapon_count = Ship.read_usp(batteries[7])
+    @figters = Ship.read_usp(usp[24])
     @fuel = fuel
     @hits = {}
     @jump = Ship.read_usp(usp[5])
-    @lasers = usp[18]
-    @laser_count = batteries[6]
+    @lasers = Ship.read_usp(usp[18])
+    @laser_count = Ship.read_usp(batteries[6])
     @maneuver = Ship.read_usp(usp[6])
     @meson_gun = Ship.read_usp(usp[21])
     @meson_gun_count = Ship.read_usp(batteries[9])
-    @meson_screen = usp[13]
-    @meson_screen_count = batteries[1]
-    @missiles = usp[22]
-    @missile_count = batteries[10]
-    @nuc_damp = usp[14]
-    @nuc_damp_count = batteries[2]
+    @meson_screen = Ship.read_usp(usp[13])
+    @meson_screen_count = Ship.read_usp(batteries[1])
+    @missiles = Ship.read_usp(usp[22])
+    @missile_count = Ship.read_usp(batteries[10])
+    @nuc_damp = Ship.read_usp(usp[14])
+    @nuc_damp_count = Ship.read_usp(batteries[2])
     @particle_acc = Ship.read_usp(usp[20])
     @particle_acc_count = Ship.read_usp(batteries[8])
-    @force_field = usp[15]
-    @force_field_count = batteries[3]
+    @force_field = Ship.read_usp(usp[15])
+    @force_field_count = Ship.read_usp(batteries[3])
     @power = Ship.read_usp(usp[7])
-    @repulsors = usp[16]
-    @repulsor_count = batteries[4]
-    @sand = usp[12]
-    @sand_count = batteries[0]
-    @status = {}
+    @repulsors = Ship.read_usp(usp[16])
+    @repulsor_count = Ship.read_usp(batteries[4])
+    @sand = Ship.read_usp(usp[12])
+    @sand_count = Ship.read_usp(batteries[0])
     @tons = tons
+  end
+  
+  def battery_count
+    @energy_weapon_count + @laser_count + @meson_gun_count + @particle_acc_count + @missile_count + @sand_count
+  end
+  
+  def bay_weapons
+    # Assuming plasma guns and fusion guns can't be bay weapons
+    subtotal = 0
+    subtotal += @particle_acc_count if @particle_acc < 10
+    subtotal += @meson_gun_count if @meson_gun < 10
+    subtotal += @repulsor_count if @repulsors == 6
+    subtotal += @missle_cont if @missiles > 6
+    subtotal
   end
   
   def bridge_cost
@@ -56,9 +70,9 @@ class Ship
   end
   
   def comp_cost
-    if @comp_type == :fib
+    if comp_fib?
       [0, 3, 14, 27, 45, 68, 83, 100, 140, 200][comp_model] * 1_000_000
-    elsif @comp_type == :bis
+    elsif comp_bis?
       [0, 4, 18][comp_model] * 1_000_000
     else
       [0, 2, 9, 18, 30, 45, 55, 80, 110, 140][comp_model] * 1_000_000
@@ -74,7 +88,7 @@ class Ship
   end
   
   def comp_fib?
-    @comp_fib ||= ('A'..'J').include?(comp)
+    ('A'..'J').include?(comp)
   end
   
   def comp_model
@@ -95,6 +109,25 @@ class Ship
   
   def crew
     # Includes officers, so space/cost equations count them double
+    if small_craft?
+      return 2
+    elsif tons <= 1000
+      subtotal = 1 + battery_count
+      subtotal += 2 + power_tons / 35 if tons >= 200
+      return subtotal
+    else
+      if tons <= 20_000
+        subtotal = 6
+      else
+        subtotal = 5 * (tons / 10_000)
+      end
+      subtotal += (jump_tons + maneuver_tons + power_tons).to_i / 100
+      subtotal += (major_weapon_tons / 100 - 1) if major_weapon_tons > 0
+      subtotal += battery_count
+      subtotal += bay_weapons
+      subtotal += screen_count * 4
+      return subtotal
+    end
   end
   
   def crew_space_cost
@@ -107,7 +140,7 @@ class Ship
   
   def comp_tons
     @comp < 6 ? base = @comp : base = @comp * 2 - 5
-    @comp_type == :fib ? base * 2 : base
+    comp_fib? ? base * 2 : base
   end
   
   def drop_tank_cost
@@ -135,6 +168,13 @@ class Ship
   end
   
   def major_weapon_tons
+    if @meson_gun > 9
+      return MesonGun.new(@meson_gun).tons
+    elsif @particle_acc > 9
+      return ParticleAccelerator.new(@particle_acc).tons
+    else
+      return 0
+    end
   end
   
   def maneuver_cost
@@ -215,7 +255,13 @@ class Ship
     @scoops ? @tons * 1_000 : 0
   end
   
+  def screen_count
+    @nuc_damp_count + @meson_screen_count + @force_field_count
+  end
+  
   def sec_heads
+    # May add rules for flight secion head and troops commander later
+    tons > 1000 ? 3 : 0
   end
   
   def size
@@ -251,12 +297,13 @@ class Ship
   end
   
   def valid_fuel?
-    # TODO: Fix to remove @jump_fuel
-    # (@jump_fuel + @drop_tanks) >= (@tons + @drop_tanks) * @jump / 10.0
+    total_fuel = @fuel + @drop_tanks
+    needed_fuel_percent = jump_with_tanks / 10.0 + power_with_tanks / 100.0
+    total_fuel >= needed_fuel_percent * tons_with_tanks
   end
   
   def self.read_usp(code)
-    @usp_hash ||= {}
+    @usp_hash ||= { ' ' => 0 }
     @usp_hash[code] ||= self.usp_codes.index(code)
   end
   
