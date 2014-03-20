@@ -3,15 +3,13 @@ require './lib/battery'
 
 class Ship
   attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapons
-  attr_accessor :energy_weapon_count, :fighters, :jump, :lasers, :laser_count
-  attr_accessor :maneuver, :meson_gun, :meson_gun_count, :meson_screen
-  attr_accessor :meson_screen_count, :missiles, :missile_count, :nuc_damp
-  attr_accessor :nuc_damp_count, :particle_acc, :particle_acc_count
-  attr_accessor :force_field, :force_field_count, :power,  :repulsors 
-  attr_accessor :repulsor_count, :sand, :sand_count, :tons
-  attr_accessor :hits
+  attr_accessor :energy_weapon_count, :fighters, :hits, :jump, :lasers
+  attr_accessor :laser_count, :maneuver, :meson_gun, :meson_gun_count
+  attr_accessor :meson_screen, :missiles, :missile_count, :nuc_damp, :options
+  attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
+  attr_accessor :power,  :repulsors, :repulsor_count, :sand, :sand_count, :tons
     
-  def initialize(usp, batteries, drop_tanks, fuel, tons)
+  def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
     @armor = Ship.read_usp(usp[11])
     @comp = Ship.read_usp(usp[8])
@@ -30,15 +28,13 @@ class Ship
     @meson_gun = Ship.read_usp(usp[21])
     @meson_gun_count = Ship.read_usp(batteries[9])
     @meson_screen = Ship.read_usp(usp[13])
-    @meson_screen_count = Ship.read_usp(batteries[1])
     @missiles = Ship.read_usp(usp[22])
     @missile_count = Ship.read_usp(batteries[10])
     @nuc_damp = Ship.read_usp(usp[14])
-    @nuc_damp_count = Ship.read_usp(batteries[2])
     @particle_acc = Ship.read_usp(usp[20])
     @particle_acc_count = Ship.read_usp(batteries[8])
     @force_field = Ship.read_usp(usp[15])
-    @force_field_count = Ship.read_usp(batteries[3])
+    @options = options
     @power = Ship.read_usp(usp[7])
     @repulsors = Ship.read_usp(usp[16])
     @repulsor_count = Ship.read_usp(batteries[4])
@@ -105,6 +101,10 @@ class Ship
       @comp_model = 9 if @comp_model == 0
     end
     @comp_model
+  end
+  
+  def comp_tons
+    comp_fib? ? comp_model * 2 : comp_model
   end
   
   def crew
@@ -196,6 +196,36 @@ class Ship
     ((100.0 * maneuver_tons / tons_with_tanks + 1) / 3).to_i
   end
   
+  def meson_screen_cost
+    # Factors above 1 not allowed at TL 12
+    @meson_screen > 0 ? 80_000 : 0
+  end
+  
+  def meson_screen_energy
+    # Factors above 1 not allowed at TL 12
+    @meson_screen > 0 ? 0.2 * @tons / 100 : 0
+  end
+  
+  def meson_screen_tons
+    # Factors above 1 not allowed at TL 12
+    @meson_screen > 0 ? 90 : 0
+  end
+  
+  def nuc_damp_cost
+    # Factors above 1 not allowed at TL 12
+    @nuc_damp > 0 ? 50_000 : 0
+  end
+  
+  def nuc_damp_energy
+    # Factors above 1 not allowed at TL 12
+    @nuc_damp > 0 ? 10 : 0
+  end
+  
+  def nuc_dam_tons
+    # Factors above 1 not allowed at TL 12
+    @nuc_damp > 0 ? 50 : 0
+  end
+  
   def particle_acc_tons
     if @particle_acc > 9
       return [5_500, 
@@ -251,12 +281,31 @@ class Ship
     (100.0 * power_tons / tons_with_tanks / 3).to_i
   end
   
+  def repulsor_cost
+    # 100-ton bay type only type available at TL 12
+    @repulsors > 0 ? 10_000_000 * @repulsor_count : 0
+  end
+  
+  def repulsor_energy
+    # 100-ton bay type only type available at TL 12
+    @repulsors > 0 ? 10 * @repulsor_count : 0
+  end
+  
+  def repulsor_tons
+    # 100-ton bay type only type available at TL 12
+    @repulsors > 0 ? 100 * @repulsor_count : 0
+  end
+  
   def scoops_cost
     @scoops ? @tons * 1_000 : 0
   end
   
   def screen_count
-    @nuc_damp_count + @meson_screen_count + @force_field_count
+    subtotal = 0
+    subtotal += 1 if @nuc_damp > 0
+    subtotal += 1 if @meson_screen > 0
+    subtotal += 1 if @force_field > 0
+    subtotal
   end
   
   def sec_heads
@@ -300,6 +349,10 @@ class Ship
     total_fuel = @fuel + @drop_tanks
     needed_fuel_percent = jump_with_tanks / 10.0 + power_with_tanks / 100.0
     total_fuel >= needed_fuel_percent * tons_with_tanks
+  end
+  
+  def valid_screens?
+    @meson_screen < 2 && @nuc_damp < 2 && @force_field == 0
   end
   
   def self.read_usp(code)

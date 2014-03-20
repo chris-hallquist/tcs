@@ -47,13 +47,62 @@ class Battery
   end  
 end
 
-class MissileAttack < Battery
-end
-
 class BeamWeapon < Battery
 end
 
+class EnergyWeapon < BeamWeapon
+  # Will assume fusion guns not in bays, for now at least
+end
+
+class Laser < BeamWeapon
+  def initialize(factor, type=:beam)
+    super(factor)
+    @type=type
+  end
+end
+
 class MesonGun < Battery
+  def cost
+    return [10_000,
+            12_000,
+            3_000,
+            5_000,
+            800,
+            1_000,
+            400,
+            600,
+            400,
+            10_000,
+            3_000,
+            800,
+            600,
+            5_000,
+            1_000,
+            800,
+            2_000,
+            1_000][factor - 10] * 10_000_000
+  end
+  
+  def energy
+    return [500,
+            600,
+            600,
+            700,
+            800,
+            800,
+            900,
+            900,
+            1_000,
+            1_000,
+            1_000,
+            1_000,
+            1_100,
+            1_100,
+            1_100,
+            1_200,
+            1_2000][factor - 10]
+  end
+  
   def tons    
     return [5_000,
             8_000,
@@ -73,6 +122,13 @@ class MesonGun < Battery
             5_000,
             8_000,
             7_000][factor - 10]
+  end
+end
+
+class MissileAttack < Battery
+  def initialize(factor, type=:nuc)
+    super(factor)
+    @type=type
   end
 end
 
@@ -97,9 +153,46 @@ class ParticleAccelerator < Battery
     end
   end
   
+  def cost
+    if factor <= 4
+      return 20_000_000
+    elsif factor <= 8
+      return 35_000_000
+    else
+      return [3_500,
+               3_000,
+               2_400,
+               1_500,
+               1_200,
+               1_200,
+               800,
+               500,
+               3_000,
+               2_000,
+               1_600,
+               1_200,
+               1_000,
+               800,
+               2_000,
+               1_500,
+               1_200,
+               1_000][factor - 10] * 1_000_000
+    end
+  end
+  
   def defenses_penetrated?(target)
     true
     # No defenses are possible against a particle accelerator
+  end
+  
+  def energy
+    if factor <= 4
+      return 30
+    elsif factor <= 9
+      return 60
+    else
+      return (((factor - 10) / 3) + 5) * 100
+    end
   end
   
   def roll_damage

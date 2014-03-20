@@ -4,7 +4,29 @@ This is a machine learning / genetic algorithms project I originally proposed [h
 
 I'm currently still in the "translate Traveller's rules into Ruby code" stage. The machine learning stage will come later.
 
-I plan to write the code in a way that assumes the rules of the original 1981 tournament, which stated:
+The Trillion Credit Squadron scenario had special rules for calculating fleet costs. Among other things, the rules specify that players must pay:
+
+>Architect's fees for the first ship of a specified class. Changes in a ship which do not constitute design of a new ship class do not require additional architect's fees. Changes in a design which alter its class require payment of architect's fees for the entire ship. Ship class is discussed on page 19.
+
+>*(Source: Game Designers' Workshop. Adventure 5: Trillion Credit Squadron. p. 8.)*
+
+On the other hand, the rules state that the following costs may be ignored:
+
+> 1. Salaries for crew members.
+> 2. Ship operating expenses, including fuel, environment, overhaul, and life support expenses.
+> 3. Ammunition, including reloads, expendable items, missiles, and spare parts.
+> 4. Ship's Locker, including aromory equipment for ship's troops or service crew, small arms, vacc suits, tools, and other minor items.
+> 5. Battle damage repairs.
+
+>*(Source: Game Designers' Workshop. Adventure 5: Trillion Credit Squadron. p. 8.)*
+
+Fleets with multiple ships of the same also get a discount:
+
+> When more than one vessel (ship, big craft, or small craft) is constructed using the same or similar statistics (see page 19), the second and all subsequent vessels are produced at 80% of the construction cost of the original vessel. The architect's fee need not be paid again.
+
+>*(Source: Game Designers' Workshop. Adventure 5: Trillion Credit Squadron. p. 9.)*
+
+Finally, I plan to write the code in a way that assumes the rules of the original 1981 tournament, which stated:
 
 >Battle will be to the death: whichever player has the last ship capable of firing will be declared the winner of the round...
 
@@ -107,3 +129,23 @@ Some rules seem highly unlikely to matter in the TCS scenario, and therefore wil
 * Boarding and ship's troops
 
 Rules for carried craft will not be implemented until I begin exploring heterogenous fleets.
+
+# Tech Levels
+
+Because the original TCS tournament set the tech level at 12, I've focused on implementing rules for that tech level. Some systems are unavailable at that tech level, while others may be obsolete. So be warned: implementation of rules for unavailable or obsolete systems may be spotty. 
+
+System factors that are available, but not obsolete, at TL12:
+
+1. Particle Accelerator: 4, 8, E, L, Q
+2. Meson Gun: C, D, K
+3. Missile: 1-6, 8-9
+4. Laser: 1-8
+5. Energy Weapon: 1-8
+6. Sand-Caster: 3-9
+7. Repulsor: 6
+8. Nuclear Dampers: 1
+9. Meson Screens: 1
+
+# Missiles
+
+It's unclear at what point in the ship design process players are supposed to choose whether to use high explosive or nuclear missiles. I've decided to make nuclear missiles the default, much as beam lasers are the default. 
