@@ -52,12 +52,65 @@ end
 
 class EnergyWeapon < BeamWeapon
   # Will assume fusion guns not in bays, for now at least
+  def cost
+    turrets * 1_000_000
+  end
+  
+  def energy
+    turrets * 2
+  end
+
+  def tons
+    turrets * 2
+  end
+  
+  def turrets
+    @turrets ||= Hash.new(0).merge({ 4 => 1, 
+                                     5 => 4, 
+                                     6 => 10, 
+                                     7 => 11, 
+                                     8 => 20 })[factor]
+  end
 end
 
 class Laser < BeamWeapon
+  attr_accessor :type
+  
   def initialize(factor, type=:beam)
     super(factor)
     @type=type
+  end
+  
+  def cost
+    (type == :pulse ? turrets * 0.5 : turrets) * 1_000_000
+  end
+  
+  def energy
+    turrets
+  end
+  
+  def tons
+    turrets
+  end
+  
+  def turrets
+    if type == :pulse
+      return @turrets ||= Hash.new(0).merge({ 1 => 1, 
+                                              2 => 3, 
+                                              3 => 6, 
+                                              4 => 10, 
+                                              5 => 21,
+                                              6 => 30 })[factor]
+    else
+      return @turrets ||= Hash.new(0).merge({ 1 => 1, 
+                                              2 => 2, 
+                                              3 => 3, 
+                                              4 => 6, 
+                                              5 => 10,
+                                              6 => 15,
+                                              7 => 21,
+                                              8 => 30 })[factor]
+    end
   end
 end
 
@@ -125,10 +178,27 @@ class MesonGun < Battery
   end
 end
 
-class MissileAttack < Battery
+class Missiles < Battery
   def initialize(factor, type=:nuc)
     super(factor)
     @type=type
+  end
+  
+  def cost
+    turrets * 750_000
+  end
+  
+  def tons
+    turrets
+  end
+
+  def turrets
+    @turrets ||= Hash.new(0).merge({ 1 => 1, 
+                                     2 => 3, 
+                                     3 => 6, 
+                                     4 => 12, 
+                                     5 => 18,
+                                     6 => 30 })[factor]
   end
 end
 
@@ -232,5 +302,25 @@ class ParticleAccelerator < Battery
   
   def to_hit(target)
     attack_table + standard_dms_to_hit
+  end
+end
+
+class SandCaster < Battery
+  def cost
+    turrets * 250_000
+  end
+  
+  def tons
+    turrets
+  end
+
+  def turrets
+    @turrets ||= Hash.new(0).merge({ 3 => 1, 
+                                     4 => 3, 
+                                     5 => 6, 
+                                     6 => 8, 
+                                     7 => 10,
+                                     8 => 20,
+                                     9 => 30 })[factor]
   end
 end

@@ -12,7 +12,7 @@ class Ship
   def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
     @armor = Ship.read_usp(usp[11])
-    @comp = Ship.read_usp(usp[8])
+    @comp = usp[8]
     @config = Ship.read_usp(usp[4])
     @crew_code = Ship.read_usp(usp[9])
     @drop_tanks = drop_tanks
@@ -41,6 +41,14 @@ class Ship
     @sand = Ship.read_usp(usp[12])
     @sand_count = Ship.read_usp(batteries[0])
     @tons = tons
+  end
+  
+  def armor_cost
+    (300_000 + 100_000 * armor) * armor_tons
+  end
+  
+  def armor_tons
+    tons * (2 + 2 * armor)
   end
   
   def battery_count
@@ -76,7 +84,7 @@ class Ship
   end
   
   def comp_bis?
-    comp == 'R' || comp == 'S'
+    @comp == 'R' || @comp == 'S'
   end
   
   def comp_energy
@@ -84,7 +92,7 @@ class Ship
   end
   
   def comp_fib?
-    ('A'..'J').include?(comp)
+    ('A'..'J').include?(@comp)
   end
   
   def comp_model
@@ -92,19 +100,27 @@ class Ship
   end
   
   def comp_model!
-    if comp == 'R'
+    if @comp == 'R'
       @comp_model = 1 
-    elsif comp == 'S'
+    elsif @comp == 'S'
       @comp_model = 2
     else
-      @comp_model = Ship.read_usp(comp) % 9
+      @comp_model = Ship.read_usp(@comp) % 9
       @comp_model = 9 if @comp_model == 0
     end
     @comp_model
   end
   
   def comp_tons
-    comp_fib? ? comp_model * 2 : comp_model
+    @comp < 6 ? base = @comp : base = @comp * 2 - 5
+    comp_fib? ? base * 2 : base
+  end
+  
+  def cost
+    armor + comp_cost + crew_space_cost + drop_tank_cost + energy_weapons_cost +
+      hull_cost + jump_cost + laser_cost + maneuver_cost + meson_gun_cost +
+      meson_screen_cost + nuc_damp_cost + particle_acc_cost + power_cost +
+      repulsor_cost + sand_cost + scoops_cost
   end
   
   def crew
@@ -138,17 +154,24 @@ class Ship
     (crew + sec_heads) * 4
   end
   
-  def comp_tons
-    @comp < 6 ? base = @comp : base = @comp * 2 - 5
-    comp_fib? ? base * 2 : base
-  end
-  
   def drop_tank_cost
     @drop_tanks > 0 ? 1_000 * (@drop_tanks + 10) : 0
   end
   
   def energy
     @tons * @power * 0.01
+  end
+  
+  def energy_weapons_cost
+    EnergyWeapon.new(@energy_weapons).cost * @energy_weapon_count
+  end
+  
+  def energy_weapons_energy
+    EnergyWeapon.new(@energy_weapons).energy * @energy_weapon_count
+  end
+  
+  def energy_weapons_tons
+    EnergyWeapon.new(@energy_weapons).tons * @energy_weapon_count
   end
   
   def hull_cost
@@ -165,6 +188,18 @@ class Ship
   
   def jump_with_tanks
     (100.0 * jump_tons / tons_with_tanks).to_i - 1
+  end
+  
+  def laser_cost
+    Laser.new(@lasers, options[:laser_type]).cost * @laser_count
+  end
+  
+  def laser_energy
+    Laser.new(@lasers, options[:laser_type]).energy * @laser_count
+  end
+  
+  def laser_tons
+    Laser.new(@lasers, options[:laser_type]).tons * @laser_count
   end
   
   def major_weapon_tons
@@ -196,6 +231,18 @@ class Ship
     ((100.0 * maneuver_tons / tons_with_tanks + 1) / 3).to_i
   end
   
+  def meson_gun_cost
+    MesonGun.new(@meson_gun).cost
+  end
+  
+  def meson_gun_energy
+    MesonGun.new(@meson_gun).energy
+  end
+  
+  def meson_gun_tons
+    MesonGun.new(@meson_gun).tons
+  end
+  
   def meson_screen_cost
     # Factors above 1 not allowed at TL 12
     @meson_screen > 0 ? 80_000 : 0
@@ -209,6 +256,14 @@ class Ship
   def meson_screen_tons
     # Factors above 1 not allowed at TL 12
     @meson_screen > 0 ? 90 : 0
+  end
+  
+  def missiles_cost
+    Missiles.new(@missiles).cost * @missile_count
+  end
+  
+  def missiles_tons
+    Missiles.new(@missiles).tons * @missile_count
   end
   
   def nuc_damp_cost
@@ -226,47 +281,16 @@ class Ship
     @nuc_damp > 0 ? 50 : 0
   end
   
+  def particle_acc_cost
+    ParticleAccelerator.new(@particle_acc).cost * @particle_acc_count
+  end
+  
+  def particle_acc_energy
+    ParticleAccelerator.new(@particle_acc).energy * @particle_acc_count
+  end
+  
   def particle_acc_tons
-    if @particle_acc > 9
-      return [5_500, 
-              5_000, 
-              4_500, 
-              4_000, 
-              3_500, 
-              2_500, 
-              2_500, 
-              5_000,
-              4_500,
-              4_000, 
-              3_500,
-              3_000,
-              2_500,
-              4_500,
-              4_000,
-              3_500,
-              3_000][@particle_acc - 10]
-    elsif @meson_gun > 9
-      return [5_000,
-              8_000,
-              2_000,
-              5_000,
-              1_000,
-              2_000,
-              1_000,
-              2_000,
-              1_000,
-              8_000,
-              5_000,
-              4_000,
-              2_000,
-              8_000,
-              7_000,
-              5_000,
-              8_000,
-              7_000][@meson_gun - 10]
-    else
-      return 0
-    end
+    ParticleAccelerator.new(@particle_acc).tons * @particle_acc_count
   end
   
   def power_cost
@@ -295,9 +319,17 @@ class Ship
     # 100-ton bay type only type available at TL 12
     @repulsors > 0 ? 100 * @repulsor_count : 0
   end
+
+  def sand_cost
+    SandCaster.new(sand).cost * sand_count
+  end
+  
+  def sand_tons
+    SandCaster.new(sand).tons * sand_count
+  end
   
   def scoops_cost
-    @scoops ? @tons * 1_000 : 0
+    options[:scoops] ? @tons * 1_000 : 0
   end
   
   def screen_count
