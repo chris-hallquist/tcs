@@ -309,6 +309,8 @@ class ParticleAccelerator < Battery
               4_000,
               3_500,
               3000][factor - 10]
+    else
+      return 0
     end
   end
   

@@ -3,7 +3,7 @@ require './lib/battery'
 
 class Ship
   attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapons
-  attr_accessor :energy_weapon_count, :fighters, :hits, :jump, :lasers
+  attr_accessor :energy_weapon_count, :fighters, :fuel, :hits, :jump, :lasers
   attr_accessor :laser_count, :maneuver, :meson_gun, :meson_gun_count
   attr_accessor :meson_screen, :missiles, :missile_count, :nuc_damp, :options
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
@@ -59,7 +59,7 @@ class Ship
   end
   
   def armor_tons
-    tons * (2 + 2 * armor_purchased) / 100
+    tons * (2 + 2 * armor_purchased) / 100.0
   end
   
   def battery_count
@@ -111,24 +111,24 @@ class Ship
   end
   
   def comp_model!
-    if @comp == 'R'
+    if comp == 'R'
       @comp_model = 1 
-    elsif @comp == 'S'
+    elsif comp == 'S'
       @comp_model = 2
     else
       @comp_model = Ship.read_usp(@comp) % 9
-      @comp_model = 9 if @comp_model == 0
+      @comp_model = 9 if comp_model == 0
     end
     @comp_model
   end
   
   def comp_tons
-    @comp < 6 ? base = @comp : base = @comp * 2 - 5
+    comp_model < 6 ? base = comp_model : base = comp_model * 2 - 5
     comp_fib? ? base * 2 : base
   end
   
   def cost
-    armor_cost + comp_cost + crew_space_cost + drop_tank_cost +
+    armor_cost + bridge_cost + comp_cost + crew_space_cost + drop_tank_cost +
      energy_weapons_cost + hull_cost + jump_cost + laser_cost + maneuver_cost + 
      meson_gun_cost + meson_screen_cost + missiles_cost + nuc_damp_cost +
      particle_acc_cost + power_cost + repulsor_cost + sand_cost + scoops_cost
@@ -207,6 +207,16 @@ class Ship
   
   def hull_cost
     @tons * 10_000 * [0, 12, 11, 10, 6, 7, 8, 5, 0.09, 0.075][@config]
+  end
+  
+  def hull_waste_tons
+    if config == 8
+      return tons * 0.20
+    elsif config == 9
+      return tons * 0.35
+    else
+      return 0
+    end
   end
   
   def jump_cost
@@ -307,7 +317,7 @@ class Ship
     @nuc_damp > 0 ? 10 : 0
   end
   
-  def nuc_dam_tons
+  def nuc_damp_tons
     # Factors above 1 not allowed at TL 12
     @nuc_damp > 0 ? 50 : 0
   end
@@ -404,8 +414,43 @@ class Ship
     @tons < 100 && @jump == 0
   end
   
+  def tonnage_code
+    if tons < 1_000
+      return tons.to_i / 100
+    elsif tons < 10_000
+      return tons.to_i / 1_000 + 9
+    elsif tons < 60_000
+      return tons.to_i / 10_000 + 18
+    elsif tons < 75_000
+      return 23
+    elsif tons < 100_000
+      return 24
+    elsif tons < 600_000
+      return tons.to_i / 100_000 + 24
+    elsif tons < 700_000
+      return 29
+    elsif tons < 900_000
+      return 30
+    elsif tons < 1_000_000
+      return 31
+    else
+      return 32
+    end
+  end
+  
+  def tons_used
+    armor_tons + bridge_tons + comp_tons + crew_space_tons + 
+     energy_weapons_tons + fuel + hull_waste_tons + jump_tons + laser_tons +
+     maneuver_tons + meson_gun_tons + meson_screen_tons + missiles_tons + 
+     nuc_damp_tons + particle_acc_tons + power_tons + repulsor_tons + sand_tons
+  end
+  
   def tons_with_tanks
     @tons + @drop_tanks
+  end
+  
+  def valid?
+    valid_fuel? && valid_major_weapon? && valid_screens? && valid_tons?
   end
   
   def valid_fuel?
@@ -414,8 +459,17 @@ class Ship
     total_fuel >= needed_fuel_percent * tons_with_tanks
   end
   
+  def valid_major_weapon?
+    !((meson_gun > 9 && (particle_acc > 9 || meson_gun_count > 1)) ||
+     (particle_acc > 9 && particle_acc_count > 1))
+  end
+  
   def valid_screens?
     @meson_screen < 2 && @nuc_damp < 2 && @force_field == 0
+  end
+  
+  def valid_tons?
+    tons_used <= tons
   end
   
   def self.read_usp(code)
