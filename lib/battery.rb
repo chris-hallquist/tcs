@@ -178,7 +178,7 @@ class MesonGun < Battery
   end
 end
 
-class Missiles < Battery
+class Missile < Battery
   def initialize(factor, type=:nuc)
     super(factor)
     @type=type

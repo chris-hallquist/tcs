@@ -2,12 +2,12 @@ require 'set'
 require './lib/battery'
 
 class Ship
-  attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapons
-  attr_accessor :energy_weapon_count, :fighters, :fuel, :hits, :jump, :lasers
+  attr_accessor :armor, :comp, :config, :crew_code, :drop_tanks, :energy_weapon
+  attr_accessor :energy_weapon_count, :fighters, :fuel, :hits, :jump, :laser
   attr_accessor :laser_count, :maneuver, :meson_gun, :meson_gun_count
-  attr_accessor :meson_screen, :missiles, :missile_count, :nuc_damp, :options
+  attr_accessor :meson_screen, :missile, :missile_count, :nuc_damp, :options
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
-  attr_accessor :power,  :repulsors, :repulsor_count, :sand, :sand_count, :tons
+  attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
     
   def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
@@ -16,19 +16,19 @@ class Ship
     @config = Ship.read_usp(usp[4])
     @crew_code = Ship.read_usp(usp[9])
     @drop_tanks = drop_tanks
-    @energy_weapons = Ship.read_usp(usp[19])
+    @energy_weapon = Ship.read_usp(usp[19])
     @energy_weapon_count = Ship.read_usp(batteries[7])
     @figters = Ship.read_usp(usp[24])
     @fuel = fuel
     @hits = {}
     @jump = Ship.read_usp(usp[5])
-    @lasers = Ship.read_usp(usp[18])
+    @laser = Ship.read_usp(usp[18])
     @laser_count = Ship.read_usp(batteries[6])
     @maneuver = Ship.read_usp(usp[6])
     @meson_gun = Ship.read_usp(usp[21])
     @meson_gun_count = Ship.read_usp(batteries[9])
     @meson_screen = Ship.read_usp(usp[13])
-    @missiles = Ship.read_usp(usp[22])
+    @missile = Ship.read_usp(usp[22])
     @missile_count = Ship.read_usp(batteries[10])
     @nuc_damp = Ship.read_usp(usp[14])
     @particle_acc = Ship.read_usp(usp[20])
@@ -36,7 +36,7 @@ class Ship
     @force_field = Ship.read_usp(usp[15])
     @options = options
     @power = Ship.read_usp(usp[7])
-    @repulsors = Ship.read_usp(usp[16])
+    @repulsor = Ship.read_usp(usp[16])
     @repulsor_count = Ship.read_usp(batteries[4])
     @sand = Ship.read_usp(usp[12])
     @sand_count = Ship.read_usp(batteries[0])
@@ -71,8 +71,8 @@ class Ship
     subtotal = 0
     subtotal += @particle_acc_count if @particle_acc < 10
     subtotal += @meson_gun_count if @meson_gun < 10
-    subtotal += @repulsor_count if @repulsors == 6
-    subtotal += @missle_cont if @missiles > 6
+    subtotal += @repulsor_count if @repulsor == 6
+    subtotal += @missle_cont if @missile > 6
     subtotal
   end
   
@@ -129,8 +129,8 @@ class Ship
   
   def cost
     armor_cost + bridge_cost + comp_cost + crew_space_cost + drop_tank_cost +
-     energy_weapons_cost + hull_cost + jump_cost + laser_cost + maneuver_cost + 
-     meson_gun_cost + meson_screen_cost + missiles_cost + nuc_damp_cost +
+     energy_weapon_cost + hull_cost + jump_cost + laser_cost + maneuver_cost + 
+     meson_gun_cost + meson_screen_cost + missile_cost + nuc_damp_cost +
      particle_acc_cost + power_cost + repulsor_cost + sand_cost + scoops_cost
   end
   
@@ -139,14 +139,14 @@ class Ship
     puts "The computer costs #{comp_cost / 1_000_000} MCr"
     puts "The crew quarters cost #{crew_space_cost / 1_000_000} MCr"
     puts "The drop tanks cost #{drop_tank_cost / 1_000_000} MCr"
-    puts "The energy weapons cost #{energy_weapons_cost / 1_000_000} MCr"
+    puts "The energy weapons cost #{energy_weapon_cost / 1_000_000} MCr"
     puts "The hull costs #{hull_cost / 1_000_000} MCr"
     puts "The jump drive costs #{jump_cost / 1_000_000} MCr"
-    puts "The lasers cost #{laser_cost / 1_000_000} MCr"
+    puts "The laser cost #{laser_cost / 1_000_000} MCr"
     puts "The maneuver drive costs #{maneuver_cost / 1_000_000} MCr"
     puts "The meson gun costs #{meson_gun_cost / 1_000_000} MCr"
     puts "The meson screen costs #{meson_screen_cost / 1_000_000} MCr"
-    puts "The missiles cost #{missiles_cost / 1_000_000} MCr"
+    puts "The missile cost #{missile_cost / 1_000_000} MCr"
     puts "The nuclear damper costs #{nuc_damp_cost / 1_000_000} MCr"
     puts "The particle accelerator costs #{particle_acc_cost / 1_000_000} MCr"
     puts "The power plant costs #{power_cost / 1_000_000} MCr"
@@ -193,16 +193,16 @@ class Ship
     @tons * @power * 0.01
   end
   
-  def energy_weapons_cost
-    EnergyWeapon.new(@energy_weapons).cost * @energy_weapon_count
+  def energy_weapon_cost
+    EnergyWeapon.new(@energy_weapon).cost * @energy_weapon_count
   end
   
-  def energy_weapons_energy
-    EnergyWeapon.new(@energy_weapons).energy * @energy_weapon_count
+  def energy_weapon_energy
+    EnergyWeapon.new(@energy_weapon).energy * @energy_weapon_count
   end
   
-  def energy_weapons_tons
-    EnergyWeapon.new(@energy_weapons).tons * @energy_weapon_count
+  def energy_weapon_tons
+    EnergyWeapon.new(@energy_weapon).tons * @energy_weapon_count
   end
   
   def hull_cost
@@ -232,15 +232,15 @@ class Ship
   end
   
   def laser_cost
-    Laser.new(@lasers, options[:laser_type]).cost * @laser_count
+    Laser.new(@laser, options[:laser_type]).cost * @laser_count
   end
   
   def laser_energy
-    Laser.new(@lasers, options[:laser_type]).energy * @laser_count
+    Laser.new(@laser, options[:laser_type]).energy * @laser_count
   end
   
   def laser_tons
-    Laser.new(@lasers, options[:laser_type]).tons * @laser_count
+    Laser.new(@laser, options[:laser_type]).tons * @laser_count
   end
   
   def major_weapon_tons
@@ -299,12 +299,12 @@ class Ship
     @meson_screen > 0 ? 90 : 0
   end
   
-  def missiles_cost
-    Missiles.new(@missiles).cost * @missile_count
+  def missile_cost
+    Missile.new(@missile).cost * @missile_count
   end
   
-  def missiles_tons
-    Missiles.new(@missiles).tons * @missile_count
+  def missile_tons
+    Missile.new(@missile).tons * @missile_count
   end
   
   def nuc_damp_cost
@@ -348,17 +348,17 @@ class Ship
   
   def repulsor_cost
     # 100-ton bay type only type available at TL 12
-    @repulsors > 0 ? 10_000_000 * @repulsor_count : 0
+    @repulsor > 0 ? 10_000_000 * @repulsor_count : 0
   end
   
   def repulsor_energy
     # 100-ton bay type only type available at TL 12
-    @repulsors > 0 ? 10 * @repulsor_count : 0
+    @repulsor > 0 ? 10 * @repulsor_count : 0
   end
   
   def repulsor_tons
     # 100-ton bay type only type available at TL 12
-    @repulsors > 0 ? 100 * @repulsor_count : 0
+    @repulsor > 0 ? 100 * @repulsor_count : 0
   end
 
   def sand_cost
@@ -440,8 +440,8 @@ class Ship
   
   def tons_used
     armor_tons + bridge_tons + comp_tons + crew_space_tons + 
-     energy_weapons_tons + fuel + hull_waste_tons + jump_tons + laser_tons +
-     maneuver_tons + meson_gun_tons + meson_screen_tons + missiles_tons + 
+     energy_weapon_tons + fuel + hull_waste_tons + jump_tons + laser_tons +
+     maneuver_tons + meson_gun_tons + meson_screen_tons + missile_tons + 
      nuc_damp_tons + particle_acc_tons + power_tons + repulsor_tons + sand_tons
   end
   
@@ -466,6 +466,11 @@ class Ship
   
   def valid_screens?
     @meson_screen < 2 && @nuc_damp < 2 && @force_field == 0
+  end
+  
+  def valid_tech?
+    # Finish later
+    comp_model < 7 && ((0..6).to_a + [8, 9]).include?(missile)
   end
   
   def valid_tons?

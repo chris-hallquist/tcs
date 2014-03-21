@@ -145,6 +145,8 @@ System factors that are available, but not obsolete, at TL12:
 7. Repulsor: 6
 8. Nuclear Dampers: 1
 9. Meson Screens: 1
+10. Jump Drives: 1-3
+11. Computers: 1-6
 
 # Missiles
 
