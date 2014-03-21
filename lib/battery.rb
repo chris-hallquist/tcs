@@ -185,11 +185,23 @@ class Missiles < Battery
   end
   
   def cost
-    turrets * 750_000
+    if factor == 9
+      return 20_000_000
+    elsif factor == 8
+      return 12_000_000
+    else
+      return turrets * 750_000
+    end
   end
   
   def tons
-    turrets
+    if factor == 9
+      return 100
+    elsif factor == 8
+      return 50
+    else
+      return turrets
+    end
   end
 
   def turrets

@@ -44,11 +44,22 @@ class Ship
   end
   
   def armor_cost
-    (300_000 + 100_000 * armor) * armor_tons
+    (300_000 + 100_000 * armor_purchased) * armor_tons
+  end
+  
+  def armor_purchased
+    if config == 8
+      free_armor = 3
+    elsif config == 9
+      free_armor = 6
+    else
+      free_armor = 0
+    end
+    armor - free_armor
   end
   
   def armor_tons
-    tons * (2 + 2 * armor)
+    tons * (2 + 2 * armor_purchased) / 100
   end
   
   def battery_count
@@ -117,10 +128,30 @@ class Ship
   end
   
   def cost
-    armor + comp_cost + crew_space_cost + drop_tank_cost + energy_weapons_cost +
-      hull_cost + jump_cost + laser_cost + maneuver_cost + meson_gun_cost +
-      meson_screen_cost + nuc_damp_cost + particle_acc_cost + power_cost +
-      repulsor_cost + sand_cost + scoops_cost
+    armor_cost + comp_cost + crew_space_cost + drop_tank_cost +
+     energy_weapons_cost + hull_cost + jump_cost + laser_cost + maneuver_cost + 
+     meson_gun_cost + meson_screen_cost + missiles_cost + nuc_damp_cost +
+     particle_acc_cost + power_cost + repulsor_cost + sand_cost + scoops_cost
+  end
+  
+  def cost_summary
+    puts "The armor costs #{armor_cost / 1_000_000} MCr"
+    puts "The computer costs #{comp_cost / 1_000_000} MCr"
+    puts "The crew quarters cost #{crew_space_cost / 1_000_000} MCr"
+    puts "The drop tanks cost #{drop_tank_cost / 1_000_000} MCr"
+    puts "The energy weapons cost #{energy_weapons_cost / 1_000_000} MCr"
+    puts "The hull costs #{hull_cost / 1_000_000} MCr"
+    puts "The jump drive costs #{jump_cost / 1_000_000} MCr"
+    puts "The lasers cost #{laser_cost / 1_000_000} MCr"
+    puts "The maneuver drive costs #{maneuver_cost / 1_000_000} MCr"
+    puts "The meson gun costs #{meson_gun_cost / 1_000_000} MCr"
+    puts "The meson screen costs #{meson_screen_cost / 1_000_000} MCr"
+    puts "The missiles cost #{missiles_cost / 1_000_000} MCr"
+    puts "The nuclear damper costs #{nuc_damp_cost / 1_000_000} MCr"
+    puts "The particle accelerator costs #{particle_acc_cost / 1_000_000} MCr"
+    puts "The power plant costs #{power_cost / 1_000_000} MCr"
+    puts "The repulsor costs #{repulsor_cost / 1_000_000} MCr"
+    puts "The sand-caster costs #{sand_cost / 1_000_000} MCr"
   end
   
   def crew
@@ -232,20 +263,20 @@ class Ship
   end
   
   def meson_gun_cost
-    MesonGun.new(@meson_gun).cost
+    MesonGun.new(@meson_gun).cost * meson_gun_count
   end
   
   def meson_gun_energy
-    MesonGun.new(@meson_gun).energy
+    MesonGun.new(@meson_gun).energy * meson_gun_count
   end
   
   def meson_gun_tons
-    MesonGun.new(@meson_gun).tons
+    MesonGun.new(@meson_gun).tons * meson_gun_count
   end
   
   def meson_screen_cost
     # Factors above 1 not allowed at TL 12
-    @meson_screen > 0 ? 80_000 : 0
+    @meson_screen > 0 ? 80_000_000 : 0
   end
   
   def meson_screen_energy
@@ -268,7 +299,7 @@ class Ship
   
   def nuc_damp_cost
     # Factors above 1 not allowed at TL 12
-    @nuc_damp > 0 ? 50_000 : 0
+    @nuc_damp > 0 ? 50_000_000 : 0
   end
   
   def nuc_damp_energy
