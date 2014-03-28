@@ -133,7 +133,7 @@ class MesonGun < Battery
             1_000,
             800,
             2_000,
-            1_000][factor - 10] * 10_000_000
+            1_000][factor - 10] * 1_000_000
   end
   
   def energy

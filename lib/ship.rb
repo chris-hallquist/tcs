@@ -472,6 +472,28 @@ class Ship
      nuc_damp_tons + particle_acc_tons + power_tons + repulsor_tons + sand_tons
   end
   
+  def tons_used_summary
+    # For debugging
+    puts "#{amor_tons} tons are taken up by armor."
+    puts "#{bridge_tons} tons are taken up by the bridge."
+    puts "#{comp_tons} tons are taken up by the computer."
+    puts "#{crew_space_tons} tons are taken up by space for the crew."
+    puts "#{energy_weapon_tons} tons are taken up by energy weapons."
+    puts "#{fuel} tons are taken up by fuel."
+    puts "#{hull_waste_tons} tons are taken up by hull waste space."
+    puts "#{jump_tons} tons are taken up by the jump drive."
+    puts "#{laser_tons} tons are taken up by lasers."
+    puts "#{maneuver_tons} tons are taken up by the maneuver_drive."
+    puts "#{meson_gun_tons} tons are taken up by the meson gun."
+    puts "#{meson_screen_tons} tons are taken up by the meson screen."
+    puts "#{missile_tons} tons are taken up by missiles."
+    puts "#{nuc_damp_tons} tons are taken up by the nuclear damper."
+    puts "#{particle_acc_tons} tons are taken up by particle accelerators."
+    puts "#{power_tons} tons are taken up by the power plant."
+    puts "#{repulsor_tons} tons are taken up by repulsors."
+    puts "#{sand_tons} tons are taken up by sand-casters."
+  end
+  
   def tons_with_tanks
     @tons + @drop_tanks
   end
