@@ -43,6 +43,15 @@ class Ship
     @tons = tons
   end
   
+  def agility
+    [((energy - energy_used) / (0.01 * tons)).to_i, maneuver].min
+  end
+  
+  def agility_with_tanks
+    [((energy_with_tanks - energy_used) / (0.01 * tons)).to_i,
+       maneuver_with_tanks].min
+  end
+  
   def armor_cost
     (300_000 + 100_000 * armor_purchased) * armor_tons
   end
@@ -77,10 +86,12 @@ class Ship
   end
   
   def bridge_cost
+    return 0 if options[:no_bridge]
     5_000 * @tons
   end
   
   def bridge_tons
+    return 0 if options[:no_bridge]
     [20, @tons * 0.02].max
   end
   
@@ -135,7 +146,9 @@ class Ship
   end
   
   def cost_summary
+    # For debugging
     puts "The armor costs #{armor_cost / 1_000_000} MCr"
+    puts "The bridge costs #{bridge_cost / 1_000_000} MCr"
     puts "The computer costs #{comp_cost / 1_000_000} MCr"
     puts "The crew quarters cost #{crew_space_cost / 1_000_000} MCr"
     puts "The drop tanks cost #{drop_tank_cost / 1_000_000} MCr"
@@ -191,6 +204,16 @@ class Ship
   
   def energy
     @tons * @power * 0.01
+  end
+  
+  def energy_with_tanks
+    tons_with_tanks * power_with_tanks * 0.01
+  end
+  
+  def energy_used
+    comp_energy + energy_weapon_energy + laser_energy + meson_gun_energy +
+     meson_screen_energy + nuc_damp_energy + particle_acc_energy +
+     repulsor_energy
   end
   
   def energy_weapon_cost
@@ -415,6 +438,10 @@ class Ship
   end
   
   def tonnage_code
+    @tonnage_code ||= tonnage_code!
+  end
+  
+  def tonnage_code!
     if tons < 1_000
       return tons.to_i / 100
     elsif tons < 10_000
@@ -450,10 +477,32 @@ class Ship
   end
   
   def valid?
-    valid_fuel? && valid_major_weapon? && valid_screens? && valid_tons?
+    valid_active_def? && valid_bridge? && valid_comp? && valid_energy? &&
+      valid_fuel? && valid_major_weapon? && valid_screens? && valid_tons? &&
+      valid_weapons_tech?
+  end
+  
+  def valid_active_def?
+    [0, 6].include?(repulsor) && ([0] + (3..9).to_a).include?(sand)
+  end
+  
+  def valid_bridge?
+    !options[:no_bridge] || tons < 100
+  end
+  
+  def valid_comp?
+    comp_model < 7 && ((!comp_fib? && !comp_bis?) || tons >=100)
+  end
+  
+  def valid_energy?
+    energy - energy_used >= 0
   end
   
   def valid_fuel?
+    fuel >= tons * power * 0.01 && valid_jump_fuel?
+  end
+  
+  def valid_jump_fuel?
     total_fuel = @fuel + @drop_tanks
     needed_fuel_percent = jump_with_tanks / 10.0 + power_with_tanks / 100.0
     total_fuel >= needed_fuel_percent * tons_with_tanks
@@ -468,13 +517,15 @@ class Ship
     @meson_screen < 2 && @nuc_damp < 2 && @force_field == 0
   end
   
-  def valid_tech?
-    # Finish later
-    comp_model < 7 && ((0..6).to_a + [8, 9]).include?(missile)
-  end
-  
   def valid_tons?
     tons_used <= tons
+  end
+  
+  def valid_weapons_tech?
+    [0, 4, 8, 14, 20, 24].include?(particle_acc) && 
+      [0, 12, 13, 19].include?(meson_gun) && 
+      (missile < 7 || [8, 9].include?(missile)) && 
+      laser < 9 && energy_weapon < 9
   end
   
   def self.read_usp(code)
@@ -508,6 +559,6 @@ end
 
 class Bee < Ship
   def initialize
-    super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99)
+    super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99, { :no_bridge => true })
   end
 end

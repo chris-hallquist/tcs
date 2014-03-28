@@ -10,5 +10,8 @@ describe Ship do
     it 'should have enough fuel' do
       expect(eurisko.valid_fuel?).to be_true
     end
+    it 'should be a valid design' do
+      expect(eurisko.valid?).to be_true
+    end
   end
 end
