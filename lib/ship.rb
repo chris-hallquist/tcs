@@ -81,7 +81,7 @@ class Ship
     subtotal += @particle_acc_count if @particle_acc < 10
     subtotal += @meson_gun_count if @meson_gun < 10
     subtotal += @repulsor_count if @repulsor == 6
-    subtotal += @missle_cont if @missile > 6
+    subtotal += @missile_count if @missile > 6
     subtotal
   end
   
@@ -560,5 +560,23 @@ end
 class Bee < Ship
   def initialize
     super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99, { :no_bridge => true })
+  end
+end
+
+class Garter < Ship
+  def initialize
+    super("TB-K1567F3-B41106-34009-1", "C   1 EE  7", 6_000, 840, 12_000)
+  end
+end
+
+class Cisor < Ship
+  def initialize
+    super("BD-K9525F3-E41100-340C5-0", "1     11 1U", 9_990, 999, 19_980)
+  end
+end
+
+class Queller < Ship
+  def initialize
+    super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600)
   end
 end
