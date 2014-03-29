@@ -41,6 +41,7 @@ class Ship
     @sand = Ship.read_usp(usp[12])
     @sand_count = Ship.read_usp(batteries[0])
     @tons = tons
+    spinal_mount
   end
   
   def agility
@@ -93,6 +94,10 @@ class Ship
   def bridge_tons
     return 0 if options[:no_bridge]
     [20, @tons * 0.02].max
+  end
+  
+  def can_fire?
+    !self.hits[:perm_disabled]
   end
   
   def comp_cost
@@ -237,6 +242,20 @@ class Ship
   
   def frozen_tons
     options[:frozen_watch] ? (crew / 2.0).ceil * 0.5 : 0
+  end
+
+  def has_non_spinal?
+    @has_non_spinal ||= has_non_spinal!
+    @has_non_spinal == :yes ? return true : return false
+  end
+
+  def has_non_spinal!
+    if laser > 0 || energy_weapon > 0 || missile > 0 || 
+      (spinal_mount != :particle_acc && particle_acc > 0)
+      return :yes
+    else
+      return :no
+    end
   end
   
   def hull_cost
@@ -446,6 +465,17 @@ class Ship
   
   def small_craft?
     @tons < 100 && @jump == 0
+  end
+  
+  def spinal_mount
+    @spinal_mount ||= spinal_mount!
+    @spinal_mount == :none ? return nil : @spinal_mount
+  end
+  
+  def spinal_mount!
+    return :meson_gun if meson_gun > 9
+    return :particle_acc if particle_acc > 9
+    return :none
   end
   
   def tonnage_code
