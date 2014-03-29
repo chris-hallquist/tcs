@@ -143,7 +143,7 @@ class Ship
      energy_weapon_cost + frozen_cost + hull_cost + jump_cost + laser_cost +
      maneuver_cost + meson_gun_cost + meson_screen_cost + missile_cost +
      nuc_damp_cost + particle_acc_cost + power_cost + repulsor_cost + 
-     sand_cost + scoops_cost
+     sand_cost + scoops_cost + vehicle_cost
   end
   
   def cost_summary
@@ -167,6 +167,7 @@ class Ship
     puts "The power plant costs #{power_cost / 1_000_000} MCr"
     puts "The repulsor costs #{repulsor_cost / 1_000_000} MCr"
     puts "The sand-caster costs #{sand_cost / 1_000_000} MCr"
+    puts "The space for vehicles costs #{vehicle_cost / 1_000_000} MCr"
   end
   
   def crew
@@ -480,30 +481,31 @@ class Ship
      energy_weapon_tons + frozen_tons + fuel + hull_waste_tons + jump_tons +
      laser_tons + maneuver_tons + meson_gun_tons + meson_screen_tons +
      missile_tons + nuc_damp_tons + particle_acc_tons + power_tons + 
-     repulsor_tons + sand_tons
+     repulsor_tons + sand_tons + vehicle_tons
   end
   
   def tons_used_summary
     # For debugging
-    puts "#{armor_tons} tons are taken up by armor."
-    puts "#{bridge_tons} tons are taken up by the bridge."
-    puts "#{comp_tons} tons are taken up by the computer."
-    puts "#{crew_space_tons} tons are taken up by space for the crew."
-    puts "#{energy_weapon_tons} tons are taken up by energy weapons."
-    puts "#{fuel} tons are taken up by fuel."
-    puts "#{forzen_tons} tons are taken up by the frozen watch."
-    puts "#{hull_waste_tons} tons are taken up by hull waste space."
-    puts "#{jump_tons} tons are taken up by the jump drive."
-    puts "#{laser_tons} tons are taken up by lasers."
-    puts "#{maneuver_tons} tons are taken up by the maneuver_drive."
-    puts "#{meson_gun_tons} tons are taken up by the meson gun."
-    puts "#{meson_screen_tons} tons are taken up by the meson screen."
-    puts "#{missile_tons} tons are taken up by missiles."
-    puts "#{nuc_damp_tons} tons are taken up by the nuclear damper."
-    puts "#{particle_acc_tons} tons are taken up by particle accelerators."
-    puts "#{power_tons} tons are taken up by the power plant."
-    puts "#{repulsor_tons} tons are taken up by repulsors."
-    puts "#{sand_tons} tons are taken up by sand-casters."
+    puts "#{armor_tons} tons are taken up by armor"
+    puts "#{bridge_tons} tons are taken up by the bridge"
+    puts "#{comp_tons} tons are taken up by the computer"
+    puts "#{crew_space_tons} tons are taken up by space for the crew"
+    puts "#{energy_weapon_tons} tons are taken up by energy weapons"
+    puts "#{fuel} tons are taken up by fuel"
+    puts "#{frozen_tons} tons are taken up by the frozen watch"
+    puts "#{hull_waste_tons} tons are taken up by hull waste space"
+    puts "#{jump_tons} tons are taken up by the jump drive"
+    puts "#{laser_tons} tons are taken up by lasers"
+    puts "#{maneuver_tons} tons are taken up by the maneuver_drive"
+    puts "#{meson_gun_tons} tons are taken up by the meson gun"
+    puts "#{meson_screen_tons} tons are taken up by the meson screen"
+    puts "#{missile_tons} tons are taken up by missiles"
+    puts "#{nuc_damp_tons} tons are taken up by the nuclear damper"
+    puts "#{particle_acc_tons} tons are taken up by particle accelerators"
+    puts "#{power_tons} tons are taken up by the power plant"
+    puts "#{repulsor_tons} tons are taken up by repulsors"
+    puts "#{sand_tons} tons are taken up by sand-casters"
+    puts "#{vehicle_tons} tons are taken up by vehicles"
   end
   
   def tons_with_tanks
@@ -562,6 +564,24 @@ class Ship
       laser < 9 && energy_weapon < 9
   end
   
+  def vehicle_cost
+    vehicle_tons * 2_000
+  end
+  
+  def vehicle_tons
+    result = 0
+    if options[:vehicles]
+      options[:vehicles].each do |vehicle|
+        if vehicle.tons < 100 
+          result += vehicle.tons * 1.3 
+        else
+          result += vehicle.tons * 1.1
+        end
+      end
+    end
+    result
+  end 
+  
   def self.read_usp(code)
     @usp_hash ||= { ' ' => 0 }
     @usp_hash[code] ||= self.usp_codes.index(code)
@@ -599,7 +619,7 @@ end
 
 class Garter < Ship
   def initialize
-    super("TB-K1567F3-B41106-34009-1", "C   1 EE  7", 6_000, 840, 12_000, { frozen_watch: true })
+    super("TB-K1567F3-B41106-34009-1", "C   1 EE  7", 6_000, 840, 12_000, { frozen_watch: true, vehicles: [Wasp.new] })
   end
 end
 
@@ -611,6 +631,6 @@ end
 
 class Queller < Ship
   def initialize
-    super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600, { frozen_watch: true })
+    super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600, { frozen_watch: true, vehicles: [Bee.new, Wasp.new] })
   end
 end

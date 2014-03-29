@@ -22,6 +22,8 @@ class Damage
   
   def self.crew(ship, n)
     # Can be replaced by frozen watch
+    ship.hits[:crew] ||= 0
+    ship.hits[:crew] += 1
   end
   
   def self.critical(ship)
