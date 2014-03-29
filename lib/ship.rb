@@ -140,9 +140,10 @@ class Ship
   
   def cost
     armor_cost + bridge_cost + comp_cost + crew_space_cost + drop_tank_cost +
-     energy_weapon_cost + hull_cost + jump_cost + laser_cost + maneuver_cost + 
-     meson_gun_cost + meson_screen_cost + missile_cost + nuc_damp_cost +
-     particle_acc_cost + power_cost + repulsor_cost + sand_cost + scoops_cost
+     energy_weapon_cost + frozen_cost + hull_cost + jump_cost + laser_cost +
+     maneuver_cost + meson_gun_cost + meson_screen_cost + missile_cost +
+     nuc_damp_cost + particle_acc_cost + power_cost + repulsor_cost + 
+     sand_cost + scoops_cost
   end
   
   def cost_summary
@@ -153,6 +154,7 @@ class Ship
     puts "The crew quarters cost #{crew_space_cost / 1_000_000} MCr"
     puts "The drop tanks cost #{drop_tank_cost / 1_000_000} MCr"
     puts "The energy weapons cost #{energy_weapon_cost / 1_000_000} MCr"
+    puts "The frozen watch costs #{frozen_cost / 1_000_000} MCr"
     puts "The hull costs #{hull_cost / 1_000_000} MCr"
     puts "The jump drive costs #{jump_cost / 1_000_000} MCr"
     puts "The laser cost #{laser_cost / 1_000_000} MCr"
@@ -226,6 +228,14 @@ class Ship
   
   def energy_weapon_tons
     EnergyWeapon.new(@energy_weapon).tons * @energy_weapon_count
+  end
+  
+  def frozen_cost
+    options[:frozen_watch] ? (crew / 2.0).ceil * 50_000 : 0
+  end
+  
+  def frozen_tons
+    options[:frozen_watch] ? (crew / 2.0).ceil * 0.5 : 0
   end
   
   def hull_cost
@@ -467,19 +477,21 @@ class Ship
   
   def tons_used
     armor_tons + bridge_tons + comp_tons + crew_space_tons + 
-     energy_weapon_tons + fuel + hull_waste_tons + jump_tons + laser_tons +
-     maneuver_tons + meson_gun_tons + meson_screen_tons + missile_tons + 
-     nuc_damp_tons + particle_acc_tons + power_tons + repulsor_tons + sand_tons
+     energy_weapon_tons + frozen_tons + fuel + hull_waste_tons + jump_tons +
+     laser_tons + maneuver_tons + meson_gun_tons + meson_screen_tons +
+     missile_tons + nuc_damp_tons + particle_acc_tons + power_tons + 
+     repulsor_tons + sand_tons
   end
   
   def tons_used_summary
     # For debugging
-    puts "#{amor_tons} tons are taken up by armor."
+    puts "#{armor_tons} tons are taken up by armor."
     puts "#{bridge_tons} tons are taken up by the bridge."
     puts "#{comp_tons} tons are taken up by the computer."
     puts "#{crew_space_tons} tons are taken up by space for the crew."
     puts "#{energy_weapon_tons} tons are taken up by energy weapons."
     puts "#{fuel} tons are taken up by fuel."
+    puts "#{forzen_tons} tons are taken up by the frozen watch."
     puts "#{hull_waste_tons} tons are taken up by hull waste space."
     puts "#{jump_tons} tons are taken up by the jump drive."
     puts "#{laser_tons} tons are taken up by lasers."
@@ -581,24 +593,24 @@ end
 
 class Bee < Ship
   def initialize
-    super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99, { :no_bridge => true })
+    super("FF-0906661-A30000-00001-0", "1         2", 0, 5.94, 99, { no_bridge: true })
   end
 end
 
 class Garter < Ship
   def initialize
-    super("TB-K1567F3-B41106-34009-1", "C   1 EE  7", 6_000, 840, 12_000)
+    super("TB-K1567F3-B41106-34009-1", "C   1 EE  7", 6_000, 840, 12_000, { frozen_watch: true })
   end
 end
 
 class Cisor < Ship
   def initialize
-    super("BD-K9525F3-E41100-340C5-0", "1     11 1U", 9_990, 999, 19_980)
+    super("BD-K9525F3-E41100-340C5-0", "1     11 1U", 9_990, 999, 19_980, { frozen_watch: true })
   end
 end
 
 class Queller < Ship
   def initialize
-    super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600)
+    super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600, { frozen_watch: true })
   end
 end
