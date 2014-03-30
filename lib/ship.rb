@@ -42,6 +42,7 @@ class Ship
     @sand_count = Ship.read_usp(batteries[0])
     @tons = tons
     spinal_mount
+    weapons_uniq
   end
   
   def agility
@@ -611,6 +612,51 @@ class Ship
     end
     result
   end 
+  
+  def weapons
+    result = []
+    result << :laser if laser > 0 && laser_count > 0
+    result << :energy_weapon if energy_weapon > 0 && energy_weapon_count > 0
+    result << :meson_gun if meson_gun > 0 && meson_gun_count > 0
+    result << :particle_acc if particle_acc > 0 && particle_acc_count > 0
+    result << :missle if missle > 0 && missile_count > 0
+    result << :sand if sand > 0 && sand_count > 0
+    result << :repulsor if repulsor > 0 && repulsor_count > 0
+    result
+  end
+  
+  def weapons_least_damaged
+    return weapons_undamaged unless weapons_undamaged.empty?
+    min = ship.hits[weapon].length
+    weapons.each do |weapon|
+      min = ship.hits[weapon].length if ship.hits[weapon].length < min
+    end
+    ship.weapons.select do |weapon|
+      ship.hits[weapon].length == min
+    end
+  end
+  
+  def weapons_undamaged
+    ship.weapons.select do |weapon| 
+      !ship.hits[weapon] || ship.hits[weapon].length == 0
+    end
+  end
+  
+  def weapons_uniq
+    @weapons_uniq ||= weapons_uniq!
+  end
+  
+  def weapons_uniq!
+    result = []
+    result << :laser if laser_count == 1
+    result << :energy_weapon if energy_weapon_count == 1
+    result << :meson_gun if meson_gun_count == 1
+    result << :particle_acc if particle_acc_count == 1
+    result << :missle if missle_count == 1
+    result << :sand if sand_count == 1
+    result << :repulsor if repulsor_count == 1
+    result
+  end
   
   def self.read_usp(code)
     @usp_hash ||= { ' ' => 0 }

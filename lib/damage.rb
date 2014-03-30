@@ -310,10 +310,17 @@ class Damage
   
   def self.weapon(ship, firing_player, n)
     # Can be repaired
-    weapons = []
-    weapons << :laser if ship.laser > 0
-    weapons << :energy_weapon if ship.energy_weapon > 0
-    weapons << :meson_gun if ship.meson_gun > 0
-    
+    valid_targets = ship.weapons_least_damaged
+    target = ship.weapons[firing_player.assign_damage(valid_targets)]
+    if ship.weapons_uniq.include?(target)
+      n = ship.send(target) if ship.send(target) < n
+      ship.send(target) -= n
+      ship.hits[target] ||= []
+      ship.hits[target] << n
+    else
+      ship.send((target.to_s + "_count").to_sym) -= 1
+      ship.hits[target] ||= []
+      ship.hits[target] << 1
+    end
   end     
 end
