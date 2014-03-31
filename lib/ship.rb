@@ -52,6 +52,14 @@ class Ship
   end
   
   def agility_with_tanks
+    if hits[:power] 
+      [agility_with_tanks! - hits[:power].length, 0].max
+    else
+      agility_with_tanks!
+    end
+  end
+  
+  def agility_with_tanks!
     [((energy_with_tanks - energy_used) / (0.01 * tons)).to_i,
        maneuver_with_tanks].min
   end

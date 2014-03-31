@@ -7,6 +7,9 @@ class StarshipCombat
     @round = 1
   end
   
+  def combat_round
+  end
+  
   def determine_initiative
     fleet1_dm = 0
     fleet2_dm = 0
@@ -32,5 +35,7 @@ class StarshipCombat
       @range = @attacker.player.choose_range
     end
   end
+  
+  def form_lines
+  end
 end
-

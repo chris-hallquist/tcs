@@ -130,8 +130,6 @@ Rules for carried craft will not be implemented until I begin exploring heteroge
 
 The rule that sufficiently similar, but distinct, ship designs get a discount will not be implemented for now.
 
-The rules for dividing a fleet into two battle lines will not be implemented for the time being. It seems likely this rule was created for role-playing scenarios involving non-combat ships that need to be protected, though it is possible a heterogeneous fleet might include ships that are, for some reason, more useful towards the end of the battle.
-
 The rule that the fleet must be capable of gas giant refueling amounts to a rule that the fleet must have at least one streamlined or semi-streamlined ship, and will be ignored until I begin exploring heterogeneous fleets.
 
 Because TCS rules specify that fights are to the death, the possibility of retreat will be ignored.
