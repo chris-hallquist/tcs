@@ -1,5 +1,6 @@
 class Fleet
-  attr_accessor :ship_classes, :ship_counts, :player, :ships
+  attr_accessor :ship_classes, :ship_counts, :player, :ships, 
+  attr_accessor :battle_line, :reserve
   
   def initialize(ships_classes, ship_counts, player, is_dup=false)
     @ship_classes = ship_classes
@@ -26,6 +27,18 @@ class Fleet
     new_fleet
   end
   
+  def form_lines
+    @battle_line = []
+    @reserve = []
+    ships.each do |ship|
+      if player.assign_to_battle_line?(ship) 
+        @battle_line < ship 
+      else
+        @reserve < ship
+      end
+    end
+  end
+  
   def least_agility
     min = ships[0].agility_with_tanks
     ships.each do |ship|
@@ -46,6 +59,14 @@ class Fleet
       end
     end
     result
+  end
+  
+  def repair
+    # Ships in reserve are repaired automatically,
+    # as there is no downside to doing so
+    reserve.each do |ship|
+      ship.repair(player)
+    end
   end
   
   def ships!

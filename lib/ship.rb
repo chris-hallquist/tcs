@@ -9,6 +9,31 @@ class Ship
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
   attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
   attr_writer :comp_model
+  
+  REPAIRABLE = [
+    :computer,
+    :energy_weapon
+    :laser,
+    :maneuver,
+    :meson_gun,
+    :meson_screen,
+    :missile,
+    :nuc_damp,
+    :particle_acc,
+    :power,
+    :repulsor,
+    :sand
+    ]
+    
+  WEAPONS = [
+    :energy_weapon
+    :laser,
+    :meson_gun,
+    :missile,
+    :particle_acc,
+    :repulsor,
+    :sand
+    ]
     
   def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
@@ -52,7 +77,9 @@ class Ship
   end
   
   def agility_with_tanks
-    if hits[:power] 
+    if power == 0
+      0
+    elsif hits[:power] 
       [agility_with_tanks! - hits[:power].length, 0].max
     else
       agility_with_tanks!
@@ -165,6 +192,7 @@ class Ship
   end
   
   def can_fire?
+    return false if self.hits[:crew] && self.hits[:crew] > 0
     return false if self.hits[:perm_disabled]
     batteries.each_value do |battery|
       return true if battery.factor > 0 && battery.count > 0
@@ -487,6 +515,20 @@ class Ship
     (100.0 * power_tons / tons_with_tanks / 3).to_i
   end
   
+  def repair(owner)
+    if hits[:reviving_frozen]
+      hits[:reviving_frozen] = false
+      options[:frozen_watch] = false
+      hits[:crew] -= 1
+    elsif 
+      hits[:crew] && hits[:crew] > 0
+      hits[:reviving_frozen] = true
+    else
+      choices = ship.hits.keys.select { |sym| REPAIRABLE.include?(sym) }
+      choice = choices[owner.select_repair(choices)]
+    end
+  end
+  
   def repulsor_cost
     # 100-ton bay type only type available at TL 12
     @repulsor > 0 ? 10_000_000 * @repulsor_count : 0
@@ -718,7 +760,7 @@ class Ship
 end
 
 class Eurisko < Ship
-  def initialize
+  def initialize(
     super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 555, 11_100)
   end
 end

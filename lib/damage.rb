@@ -2,12 +2,18 @@ require './lib/ship'
 require './lib/TCS'
 
 class Damage
+  REPAIRABLE = [
+    :computer,
+    :energy_weapon
+    :laser,
+    ]
+  
   def self.bridge_destroyed(ship)
     # Critical only
 
     # Will need to be modified to handle 
     # auxilliary bridges, and ships with no bridge
-    ship.hits[:perm_disabled] = true
+    ship.hits[:bridge_destroyed] = true
   end
 
   def self.computer(ship, n, radiation=false)
@@ -21,7 +27,8 @@ class Damage
   
   def self.computer_destroyed(ship, n)
     # Critical only
-    ship.hits[:perm_disabled] = true
+    ship.hits[:computer] = []
+    ship.comp_mode = 0
   end
   
   def self.crew(ship, n)
@@ -171,7 +178,8 @@ class Damage
   
   def self.power_plant_disabled(ship)
     # Critical only
-    ship.hits[:perm_disabled] = true
+    ship.hits[:power] = []
+    ship.power = 0
   end
   
   def self.radiation(ship, firing_player, mod=0)

@@ -7,7 +7,20 @@ class StarshipCombat
     @round = 1
   end
   
+  def breakthrough_step
+  end
+  
   def combat_round
+    form_lines
+    determine_initiative
+    determine_range
+    combat_step
+    breakthrough_step
+    repair_step
+    @round += 1
+  end
+  
+  def combat_step(breakthrough=false)
   end
   
   def determine_initiative
@@ -37,5 +50,10 @@ class StarshipCombat
   end
   
   def form_lines
+    [fleet1, fleet2].each { |fleet| fleet.form_lines }
+  end
+  
+  def repair_step
+    [fleet1, fleet2].each { |fleet| fleet.repair }
   end
 end
