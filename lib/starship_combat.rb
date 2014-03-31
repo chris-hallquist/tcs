@@ -8,6 +8,10 @@ class StarshipCombat
   end
   
   def breakthrough_step
+    fleet1_can_fire = fleet1.battle_line.any? { |ship| ship.can_fire? }
+    fleet2_can_fire = fleet2.battle_line.any? { |ship| ship.can_fire? }
+    combat_step(:fleet1) if fleet1_can_fire && !fleet2_can_fire
+    combat_step(:fleet2) if fleet2_can_fire && !fleet1_can_fire
   end
   
   def combat_round
@@ -21,6 +25,8 @@ class StarshipCombat
   end
   
   def combat_step(breakthrough=false)
+    @fleet1_dup = fleet1.deep_dup
+    @fleet2_dup = fleet2.deep_dup
   end
   
   def determine_initiative

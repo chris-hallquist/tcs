@@ -26,8 +26,10 @@ class ComputerPlayer
   end
   
   def select_repair(choices)
-    # Finish later
     if choices.any? { |choice| WEAPONS.include?(choice) }
+      choices.index { |choice| WEAPONS.include?(choice) }
+    else
+      0
     end
   end
 end

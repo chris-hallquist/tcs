@@ -12,7 +12,7 @@ class Ship
   
   REPAIRABLE = [
     :computer,
-    :energy_weapon
+    :energy_weapon,
     :laser,
     :maneuver,
     :meson_gun,
@@ -24,17 +24,7 @@ class Ship
     :repulsor,
     :sand
     ]
-    
-  WEAPONS = [
-    :energy_weapon
-    :laser,
-    :meson_gun,
-    :missile,
-    :particle_acc,
-    :repulsor,
-    :sand
-    ]
-    
+
   def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
     @armor = Ship.read_usp(usp[11])
@@ -307,7 +297,7 @@ class Ship
   end
   
   def deep_dup
-    new_ship = this.dup
+    new_ship = self.dup
     
     new_ship.hits = {}
     hits.each do |key, value|
@@ -524,8 +514,20 @@ class Ship
       hits[:crew] && hits[:crew] > 0
       hits[:reviving_frozen] = true
     else
-      choices = ship.hits.keys.select { |sym| REPAIRABLE.include?(sym) }
+      choices = hits.keys.select do |sym|
+        REPAIRABLE.include?(sym) && hits[sym].length > 0
+      end
       choice = choices[owner.select_repair(choices)]
+      n = hits[choice].sort!.pop
+      if batteries[choice] 
+        if batteries[choice].uniq?
+          batteries[choice].factor 
+        else
+          batteries[choice].count += n
+        end
+      else
+        self.send("#{choice}=", self.send(choice) + n)
+      end
     end
   end
   
@@ -760,7 +762,7 @@ class Ship
 end
 
 class Eurisko < Ship
-  def initialize(
+  def initialize
     super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 555, 11_100)
   end
 end

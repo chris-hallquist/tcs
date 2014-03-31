@@ -1,8 +1,10 @@
+require './lib/ship'
+
 class Fleet
-  attr_accessor :ship_classes, :ship_counts, :player, :ships, 
+  attr_accessor :ship_classes, :ship_counts, :player, :ships 
   attr_accessor :battle_line, :reserve
   
-  def initialize(ships_classes, ship_counts, player, is_dup=false)
+  def initialize(ship_classes, ship_counts, player, is_dup=false)
     @ship_classes = ship_classes
     @ship_counts = ship_counts
     @player = player
@@ -11,18 +13,21 @@ class Fleet
   
   def cost
     result = 0
-    ship_classes.each_with_index do |class, index|
-      result += class.cost * 0.21
-      result += class.cost * 0.8 * ship_counts[index]
+    ship_classes.each_with_index do |ship_class, index|
+      result += ship_class.cost * 0.21
+      result += ship_class.cost * 0.8 * ship_counts[index]
     end
     result
   end
   
   def deep_dup
     new_fleet = Fleet.new(ship_classes, ship_counts, player, true)
-    new_fleet.ships = []
-    ships.each do |ship|
-      new_fleet.ships << ship.deep_dup
+    if battle_line && reserve
+      new_fleet.battle_line = battle_line.map(&:deep_dup)
+      new_fleet.reserve = reserve.map(&:deep_dup)
+      new_fleet.ships = new_fleet.battle_line + new_fleet.reserve
+    else
+      new_fleet.ships = ships.map(&:deep_dup)
     end
     new_fleet
   end
@@ -71,14 +76,27 @@ class Fleet
   
   def ships!
     result = []
-    ship_classes.each_with_index do |class, index|
-      result = result + [class.deep_dup] * ship_counts[index]
+    @ship_classes.each_with_index do |ship_class, index|
+      result = result + [ship_class.deep_dup] * ship_counts[index]
     end
     result
   end
   
   def TCS_valid?
-    ships.all? { |ship| ship.valid? && ship.jump_with_tanks > 2 } && 
-      pilots <= 200 && cost <= 1_000_000_000_000
+    return false unless ships.all? do |ship| 
+      ship.valid? && ship.jump_with_tanks > 2 && 
+        ship.maneuver_with_tanks > 0 
+    end 
+    pilots <= 200 && cost <= 1_000_000_000_000
+  end
+end
+
+class Lenat < Fleet
+  def initialize(player)
+    super(
+      [Garter.new, Cisor.new, Queller.new, Eurisko.new, Wasp.new, Bee.new],
+      [4, 4, 3, 75, 7, 3],
+      player
+    )
   end
 end
