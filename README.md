@@ -1,6 +1,6 @@
 # Introduction
 
-This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller.
+This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller. Historical background [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own).
 
 I'm currently still in the "translate Traveller's rules into Ruby code" stage. The machine learning stage will come later.
 
@@ -124,11 +124,17 @@ It is unclear how useful making repairs mid-combat is, so this will be reserved 
 
 # Ignored Rules
 
-Some rules seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
-
-* Boarding and ship's troops
+The rules for boarding and ship's troops seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
 
 Rules for carried craft will not be implemented until I begin exploring heterogenous fleets.
+
+The rule that sufficiently similar, but distinct, ship designs get a discount will not be implemented for now.
+
+The rules for dividing a fleet into two battle lines will not be implemented for the time being. It seems likely this rule was created for role-playing scenarios involving non-combat ships that need to be protected, though it is possible a heterogeneous fleet might include ships that are, for some reason, more useful towards the end of the battle.
+
+The rule that the fleet must be capable of gas giant refueling amounts to a rule that the fleet must have at least one streamlined or semi-streamlined ship, and will be ignored until I begin exploring heterogeneous fleets.
+
+Because TCS rules specify that fights are to the death, the possibility of retreat will be ignored.
 
 # Tech Levels
 
@@ -150,4 +156,4 @@ System factors that are available, but not obsolete, at TL12:
 
 # Missiles
 
-It's unclear at what point in the ship design process players are supposed to choose whether to use high explosive or nuclear missiles. I've decided to make nuclear missiles the default, much as beam lasers are the default. 
+It's unclear at what point in the ship design process players are supposed to choose whether to use high explosive or nuclear missiles. I've decided to make nuclear missiles the default, much as beam lasers are the default.

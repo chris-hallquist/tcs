@@ -7,4 +7,12 @@ class HumanPlayer
     puts "(Enter a number)"
     gets.to_i
   end
+  
+  def choose_range
+    puts "Choose range:"
+    puts "0. Short"
+    puts "1. Long"
+    puts "(Enter a number)"
+    gets.to_i == 0 ? :short : :long
+  end
 end

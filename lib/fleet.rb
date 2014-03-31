@@ -26,6 +26,14 @@ class Fleet
     new_fleet
   end
   
+  def least_agility
+    min = ships[0].agility_with_tanks
+    ships.each do |ship|
+      min = [min, ship.agility_with_tanks].min
+    end
+    min
+  end
+  
   def pilots
     result = 0
     ships.each do |ship|
