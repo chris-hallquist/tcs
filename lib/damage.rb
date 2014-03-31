@@ -1,5 +1,5 @@
-require 'ship'
-require 'TCS'
+require './lib/ship'
+require './lib/TCS'
 
 class Damage
   def self.bridge_destroyed(ship)
@@ -13,8 +13,8 @@ class Damage
   def self.computer(ship, n, radiation=false)
     # Can be repaired
     return if radiation && ship.comp_fib?
-    n = ship.computer_model if ship.computer_model < n
-    ship.computer_model -= n
+    n = ship.comp_model if ship.comp_model < n
+    ship.comp_model -= n
     ship.hits[:computer] ||= []
     ship.hits[:computer] << n
   end
@@ -298,8 +298,9 @@ class Damage
   
   def self.weapon(ship, firing_player, n)
     # Can be repaired
+    return if ship.batteries_remaining.empty?
     valid_targets = ship.batteries_least_damaged.keys
-    target_key = firing_player.assign_damage(valid_targets)
+    target_key = valid_targets[firing_player.assign_damage(valid_targets)]
     target = ship.batteries[target_key]
     if target.uniq?
       n = target.factor if target.factor < n

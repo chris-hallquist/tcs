@@ -8,6 +8,7 @@ class Ship
   attr_accessor :meson_screen, :missile, :missile_count, :nuc_damp, :options
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
   attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
+  attr_writer :comp_model
     
   def initialize(usp, batteries, drop_tanks, fuel, tons, options={})
     # TODO: Auxillary bridge, frozen watch, scoops, troops
@@ -115,8 +116,8 @@ class Ship
   
   def batteries_least_damaged
     return batteries_undamaged unless batteries_undamaged.empty?
-    min = [batteries.map { |sym, obj| hits[sym].length }].min
-    batteries.select { |sym, obj| hits[sym].length == min }
+    min = batteries_remaining.map { |sym, obj| hits[sym].length }.min
+    batteries_remaining.select { |sym, obj| hits[sym].length == min }
   end
   
   def batteries_remaining
@@ -156,7 +157,11 @@ class Ship
   end
   
   def can_fire?
-    !self.hits[:perm_disabled]
+    return false if self.hits[:perm_disabled]
+    batteries.each_value do |battery|
+      return true if battery.factor > 0 && battery.count > 0
+    end
+    false
   end
   
   def comp_cost
@@ -284,15 +289,15 @@ class Ship
   end
   
   def energy_weapon_cost
-    EnergyWeapon.new(@energy_weapon).cost * @energy_weapon_count
+    batteries[:energy_weapon] ? batteries[:energy_weapon].cost : 0
   end
   
   def energy_weapon_energy
-    EnergyWeapon.new(@energy_weapon).energy * @energy_weapon_count
+    batteries[:energy_weapon] ? batteries[:energy_weapon].energy : 0
   end
   
   def energy_weapon_tons
-    EnergyWeapon.new(@energy_weapon).tons * @energy_weapon_count
+    batteries[:energy_weapon] ? batteries[:energy_weapon].tons : 0
   end
   
   def frozen_cost
@@ -344,22 +349,22 @@ class Ship
   end
   
   def laser_cost
-    Laser.new(@laser, options[:laser_type]).cost * @laser_count
+    batteries[:laser] ? batteries[:laser].cost : 0
   end
   
   def laser_energy
-    Laser.new(@laser, options[:laser_type]).energy * @laser_count
+    batteries[:laser] ? batteries[:laser].energy : 0
   end
   
   def laser_tons
-    Laser.new(@laser, options[:laser_type]).tons * @laser_count
+    batteries[:laser] ? batteries[:laser].tons : 0
   end
   
   def major_weapon_tons
     if @meson_gun > 9
-      return MesonGun.new(@meson_gun).tons
+      return meson_gun_tons
     elsif @particle_acc > 9
-      return ParticleAccelerator.new(@particle_acc).tons
+      return particle_acc_tons
     else
       return 0
     end
@@ -385,15 +390,15 @@ class Ship
   end
   
   def meson_gun_cost
-    MesonGun.new(@meson_gun).cost * meson_gun_count
+    batteries[:meson_gun] ? batteries[:meson_gun].cost : 0
   end
   
   def meson_gun_energy
-    MesonGun.new(@meson_gun).energy * meson_gun_count
+    batteries[:meson_gun] ? batteries[:meson_gun].energy : 0
   end
   
   def meson_gun_tons
-    MesonGun.new(@meson_gun).tons * meson_gun_count
+    batteries[:meson_gun] ? batteries[:meson_gun].tons : 0
   end
   
   def meson_screen_cost
@@ -412,11 +417,11 @@ class Ship
   end
   
   def missile_cost
-    Missile.new(@missile).cost * @missile_count
+    batteries[:missile] ? batteries[:missile].cost : 0
   end
   
   def missile_tons
-    Missile.new(@missile).tons * @missile_count
+    batteries[:missile] ? batteries[:missile].tons : 0
   end
   
   def nuc_damp_cost
@@ -435,15 +440,15 @@ class Ship
   end
   
   def particle_acc_cost
-    ParticleAccelerator.new(@particle_acc).cost * @particle_acc_count
+    batteries[:particle_acc] ? batteries[:particle_acc].cost : 0
   end
   
   def particle_acc_energy
-    ParticleAccelerator.new(@particle_acc).energy * @particle_acc_count
+    batteries[:particle_acc] ? batteries[:particle_acc].energy : 0
   end
   
   def particle_acc_tons
-    ParticleAccelerator.new(@particle_acc).tons * @particle_acc_count
+    batteries[:particle_acc] ? batteries[:particle_acc].tons : 0
   end
   
   def power_cost
@@ -474,11 +479,11 @@ class Ship
   end
 
   def sand_cost
-    SandCaster.new(sand).cost * sand_count
+    batteries[:sand] ? batteries[:sand].cost : 0
   end
   
   def sand_tons
-    SandCaster.new(sand).tons * sand_count
+    batteries[:sand] ? batteries[:sand].tons : 0
   end
   
   def scoops_cost

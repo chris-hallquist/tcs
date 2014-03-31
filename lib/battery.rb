@@ -14,6 +14,10 @@ class Battery
     raise "Not implemented"
   end
   
+  def energy
+    0
+  end
+  
   def fire(target)
     if roll > to_hit(target) && defenses_penetrated?
       # proceed to the damage tables
@@ -65,15 +69,15 @@ end
 class EnergyWeapon < BeamWeapon
   # Will assume fusion guns not in bays, for now at least
   def cost
-    turrets * 1_000_000
+    factor * turrets * 1_000_000
   end
   
   def energy
-    turrets * 2
+    factor * turrets * 2
   end
 
   def tons
-    turrets * 2
+    factor * turrets * 2
   end
   
   def turrets
@@ -94,15 +98,15 @@ class Laser < BeamWeapon
   end
   
   def cost
-    (type == :pulse ? turrets * 0.5 : turrets) * 1_000_000
+    count * (type == :pulse ? turrets * 0.5 : turrets) * 1_000_000
   end
   
   def energy
-    turrets
+    count * turrets
   end
   
   def tons
-    turrets
+    count * turrets
   end
   
   def turrets
@@ -202,21 +206,21 @@ class Missile < Battery
   
   def cost
     if factor == 9
-      return 20_000_000
+      return count * 20_000_000
     elsif factor == 8
-      return 12_000_000
+      return count * 12_000_000
     else
-      return turrets * 750_000
+      return count * turrets * 750_000
     end
   end
   
   def tons
     if factor == 9
-      return 100
+      return count * 100
     elsif factor == 8
-      return 50
+      return count * 50
     else
-      return turrets
+      return count * turrets
     end
   end
 
@@ -253,9 +257,9 @@ class ParticleAccelerator < Battery
   
   def cost
     if factor <= 4
-      return 20_000_000
+      return count * 20_000_000
     elsif factor <= 8
-      return 35_000_000
+      return count * 35_000_000
     else
       return [3_500,
                3_000,
@@ -285,9 +289,9 @@ class ParticleAccelerator < Battery
   
   def energy
     if factor <= 4
-      return 30
+      return count * 30
     elsif factor <= 9
-      return 60
+      return count * 60
     else
       return (((factor - 10) / 3) + 5) * 100
     end
@@ -304,9 +308,9 @@ class ParticleAccelerator < Battery
   
   def tons
     if factor == 4
-      return 50
+      return count * 50
     elsif factor == 8
-      return 100
+      return count * 100
     elsif factor > 9
       return [5_500,
               5_000,
@@ -341,11 +345,11 @@ end
 
 class SandCaster < Battery
   def cost
-    turrets * 250_000
+    count * turrets * 250_000
   end
   
   def tons
-    turrets
+    count * turrets
   end
 
   def turrets
