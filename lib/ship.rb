@@ -270,6 +270,22 @@ class Ship
     (crew + sec_heads) * 4
   end
   
+  def deep_dup
+    new_ship = this.dup
+    
+    new_ship.hits = {}
+    hits.each do |key, value|
+      new_ship.hits[key] = value.dup
+    end
+    
+    new_ship.batteries = {}
+    batteries.each do |sym, obj|
+      new_ship.batteries[sym] = obj.dup
+    end
+    
+    new_ship
+  end
+  
   def drop_tank_cost
     @drop_tanks > 0 ? 1_000 * (@drop_tanks + 10) : 0
   end
