@@ -273,35 +273,23 @@ class Damage
   def self.spinal_mount_fire_control_out(ship)
     # Critical only
     if rand(2) == 0
-      if ship.spinal_mount == :meson_gun
-        ship.meson_gun = 0
-        ship.hits[:meson_gun] = []
-      elsif ship.spinal_mount == :particle_acc
-        ship.particle_acc = 0
-        ship.hits[:particle_acc] = []
+      spinal_mount = ship.spinal_mount
+      if spinal_mount
+        ship.batteries[spinal_mount].factor = 0
+        ship.hits[spinal_mount] = []
       end
+      
       ship.hits[:spinal_mount_out] = true
       ship.hits[:perm_disabled] = true if ship.hits[:fire_control_out] ||
        !ship.has_non_spinal?
     else
-      unless ship.spinal_mount == :meson_gun
-        ship.meson_gun = 0
-        ship.hits[:meson_gun] = []
+      ship.batteries.each do |sym, obj|
+        unless sym == ship.spinal_mount
+          obj.factor = 0
+          ship.hits[sym] = []
+        end
       end
-      unless ship.spinal_mount == :particle_acc
-        ship.particle_acc = 0
-        ship.hits[:particle_acc] = []
-      end
-      ship.laser = 0
-      ship.energy_weapon = 0
-      ship.missile = 0
-      ship.sand = 0
-      ship.repulsor = 0
-      ship.hits[:laser] = []
-      ship.hits[:energy_weapon] = []
-      ship.hits[:missile] = []
-      ship.hits[:sand] = []
-      ship.hits[:repulsor] = []
+  
       ship.hits[:fire_control_out] = true
       ship.hits[:perm_disabled] = true if ship.hits[:spinal_mount_out] || 
        !ship.spinal_mount
@@ -310,17 +298,18 @@ class Damage
   
   def self.weapon(ship, firing_player, n)
     # Can be repaired
-    valid_targets = ship.weapons_least_damaged
-    target = ship.weapons[firing_player.assign_damage(valid_targets)]
-    if ship.weapons_uniq.include?(target)
-      n = ship.send(target) if ship.send(target) < n
-      ship.send(target) -= n
-      ship.hits[target] ||= []
-      ship.hits[target] << n
+    valid_targets = ship.batteries_least_damaged.keys
+    target_key = firing_player.assign_damage(valid_targets)
+    target = ship.batteries[target_key]
+    if target.uniq?
+      n = target.factor if target.factor < n
+      target.factor -= n
+      ship.hits[target_key] ||= []
+      ship.hits[target_key] << n
     else
-      ship.send((target.to_s + "_count").to_sym) -= 1
-      ship.hits[target] ||= []
-      ship.hits[target] << 1
+      target.count -= 1
+      ship.hits[target_key] ||= []
+      ship.hits[target_key] << 1
     end
   end     
 end

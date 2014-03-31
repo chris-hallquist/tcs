@@ -41,8 +41,9 @@ class Ship
     @sand = Ship.read_usp(usp[12])
     @sand_count = Ship.read_usp(batteries[0])
     @tons = tons
+    batteries
+    has_non_spinal?
     spinal_mount
-    weapons_uniq
   end
   
   def agility
@@ -71,6 +72,63 @@ class Ship
   
   def armor_tons
     tons * (2 + 2 * armor_purchased) / 100.0
+  end
+  
+  def batteries
+    @batteries ||= batteries!
+  end
+  
+  def batteries!
+    @batteries = {}
+    if energy_weapon > 0 && energy_weapon_count > 0
+      args = [energy_weapon, energy_weapon_count]
+      args << options[:energy_weapon_type] if options[:energy_weapon_type]
+      @batteries[:energy_weapon] = EnergyWeapon.new(*args)
+    end
+    if laser > 0 && laser_count > 0
+      args = [laser, laser_count]
+      args << options[:laser_type] if options[:laser_type]
+      @batteries[:laser] = Laser.new(*args)
+    end
+    if meson_gun > 0 && meson_gun_count > 0
+      @batteries[:meson_gun] = MesonGun.new(meson_gun, meson_gun_count)
+    end
+    if missile > 0 && missile_count > 0
+      args = [missile, missile_count]
+      args << options[:missile_type] if options[:missile_type]
+      @batteries[:missile] = Missile.new(*args)
+    end
+    if particle_acc > 0 && particle_acc_count > 0
+      @batteries[:particle_acc] = ParticleAccelerator.new(
+        particle_acc, 
+        particle_acc_count
+      )
+    end
+    if repulsor > 0 && repulsor_count > 0
+      @batteries[:repulsor] = Repulsor.new(repulsor, repulsor_count)
+    end
+    if sand > 0 && sand_count > 0
+      @batteries[:sand] = SandCaster.new(sand, sand_count)
+    end
+    @batteries
+  end
+  
+  def batteries_least_damaged
+    return batteries_undamaged unless batteries_undamaged.empty?
+    min = [batteries.map { |sym, obj| hits[sym].length }].min
+    batteries.select { |sym, obj| hits[sym].length == min }
+  end
+  
+  def batteries_remaining
+    batteries.select do |sym, obj|
+      obj.factor > 0 && obj.count > 0
+    end
+  end
+  
+  def batteries_undamaged
+    batteries.select do |sym, obj|
+      !hits[sym] || hits[sym].empty?
+    end
   end
   
   def battery_count
@@ -246,16 +304,16 @@ class Ship
   end
 
   def has_non_spinal?
-    @has_non_spinal ||= has_non_spinal!
-    @has_non_spinal == :yes ? return true : return false
+    @has_non_spinal = has_non_spinal! unless defined? @has_non_spinal
+    @has_non_spinal
   end
 
   def has_non_spinal!
     if laser > 0 || energy_weapon > 0 || missile > 0 || 
       (spinal_mount != :particle_acc && particle_acc > 0)
-      return :yes
+      return true
     else
-      return :no
+      return false
     end
   end
   
@@ -469,14 +527,14 @@ class Ship
   end
   
   def spinal_mount
-    @spinal_mount ||= spinal_mount!
-    @spinal_mount == :none ? return nil : @spinal_mount
+    @spinal_mount = spinal_mount! unless defined? @spinal_mount
+    @spinal_mount
   end
   
   def spinal_mount!
     return :meson_gun if meson_gun > 9
     return :particle_acc if particle_acc > 9
-    return :none
+    nil
   end
   
   def tonnage_code
@@ -610,51 +668,6 @@ class Ship
         end
       end
     end
-    result
-  end 
-  
-  def weapons
-    result = []
-    result << :laser if laser > 0 && laser_count > 0
-    result << :energy_weapon if energy_weapon > 0 && energy_weapon_count > 0
-    result << :meson_gun if meson_gun > 0 && meson_gun_count > 0
-    result << :particle_acc if particle_acc > 0 && particle_acc_count > 0
-    result << :missle if missle > 0 && missile_count > 0
-    result << :sand if sand > 0 && sand_count > 0
-    result << :repulsor if repulsor > 0 && repulsor_count > 0
-    result
-  end
-  
-  def weapons_least_damaged
-    return weapons_undamaged unless weapons_undamaged.empty?
-    min = ship.hits[weapon].length
-    weapons.each do |weapon|
-      min = ship.hits[weapon].length if ship.hits[weapon].length < min
-    end
-    ship.weapons.select do |weapon|
-      ship.hits[weapon].length == min
-    end
-  end
-  
-  def weapons_undamaged
-    ship.weapons.select do |weapon| 
-      !ship.hits[weapon] || ship.hits[weapon].length == 0
-    end
-  end
-  
-  def weapons_uniq
-    @weapons_uniq ||= weapons_uniq!
-  end
-  
-  def weapons_uniq!
-    result = []
-    result << :laser if laser_count == 1
-    result << :energy_weapon if energy_weapon_count == 1
-    result << :meson_gun if meson_gun_count == 1
-    result << :particle_acc if particle_acc_count == 1
-    result << :missle if missle_count == 1
-    result << :sand if sand_count == 1
-    result << :repulsor if repulsor_count == 1
     result
   end
   

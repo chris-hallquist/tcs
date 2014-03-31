@@ -1,10 +1,13 @@
 require './lib/ship'
 
 class Battery
-  attr_accessor :factor
+  attr_accessor :factor, :count
   
-  def initialize(factor)
+  def initialize(factor, count)
     @factor = factor
+    @count = count
+    spinal?
+    uniq?
   end
   
   def defenses_penetrated?(target)
@@ -36,6 +39,10 @@ class Battery
     end
   end    
 
+  def spinal?
+    false
+  end
+
   def standard_dms_to_hit(target)
     total = @ship.comp 
     total -= target.agility
@@ -45,6 +52,11 @@ class Battery
   def to_hit
     raise "Not implemented"
   end  
+  
+  def uniq?
+    @uniq = count == 1 if @uniq == nil
+    @uniq
+  end
 end
 
 class BeamWeapon < Battery
@@ -76,8 +88,8 @@ end
 class Laser < BeamWeapon
   attr_accessor :type
   
-  def initialize(factor, type=:beam)
-    super(factor)
+  def initialize(factor, count, type=:beam)
+    super(factor, count)
     @type=type
   end
   
@@ -156,6 +168,10 @@ class MesonGun < Battery
             1_2000][factor - 10]
   end
   
+  def spinal?
+    true
+  end
+  
   def tons    
     return [5_000,
             8_000,
@@ -179,8 +195,8 @@ class MesonGun < Battery
 end
 
 class Missile < Battery
-  def initialize(factor, type=:nuc)
-    super(factor)
+  def initialize(factor, count, type=:nuc)
+    super(factor, count)
     @type=type
   end
   
@@ -282,7 +298,8 @@ class ParticleAccelerator < Battery
   end
   
   def spinal?
-    factor.is_a? String
+    @spinal = factor > 9 if @spinal == nil
+    @spinal
   end
   
   def tons
@@ -317,6 +334,9 @@ class ParticleAccelerator < Battery
   def to_hit(target)
     attack_table + standard_dms_to_hit
   end
+end
+
+class Repulsor < Battery
 end
 
 class SandCaster < Battery
