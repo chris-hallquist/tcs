@@ -18,12 +18,17 @@ class Battery
     raise "Not implemented"
   end
   
+  def dms_to_penetrate
+    comp + (self.class == EnergyWeapon ? 2 : 0)
+  end
+  
   def energy
     0
   end
   
   def hit?(target, range=nil)
-    TCS.roll + standard_dms_to_hit(target) + range_dm(range) >= attack_table
+    factor > 0 &&
+      TCS.roll + standard_dms_to_hit(target) + range_dm(range) >= attack_table
   end
   
   def size_modifiers(target)
@@ -60,6 +65,17 @@ end
 class BeamWeapon < Battery
   def attack_table
     8 - factor / 2
+  end
+  
+  def defenses_penetrated?(target, active_ds)
+    active_ds.none? do |d|
+      d.class == SandCaster && d.factor > 0
+        TCS.roll + dms_to_penetrate >= to_penetrate(d) 
+    end
+  end
+  
+  def to_penetrate(defense)
+    defense.factor + 8 - factor
   end
 end
 
@@ -167,6 +183,10 @@ class MesonGun < Battery
             1_000][factor - 10] * 1_000_000
   end
   
+  def defenses_penetrated?(target, active_ds)
+    penetrate_screen?(target) && penetrate_config?(target)
+  end
+  
   def energy
     return [500,
             600,
@@ -185,6 +205,48 @@ class MesonGun < Battery
             1_100,
             1_200,
             1_2000][factor - 10]
+  end
+
+  def penetrate_config?(target)
+
+  end
+  
+  def penetrate_screen?(target)
+    if target.meson_screen == 0
+      return true
+    elsif factor < 10
+      TCS.roll + dms_to_penetrate > 16 - factor / 2
+    else
+      TCS.roll + dms_to_penetrate > 9 - (factor - 9) / 2
+    end
+  end
+  
+  def to_penetrate_config(target)
+    if factor < 10
+      case target.config
+      when 1
+      when 2
+      when 3
+      when 4
+      when 5
+      when 6
+      when 7
+      when 8
+      when 9
+      end
+    else
+      case target.config
+      when 1
+      when 2
+      when 3
+      when 4
+      when 5
+      when 6
+      when 7
+      when 8
+      when 9
+      end
+    end
   end
 
   def range_dm(range)
@@ -305,7 +367,7 @@ class ParticleAccelerator < Battery
     end
   end
   
-  def defenses_penetrated?(target)
+  def defenses_penetrated?(target, defenses)
     true
     # No defenses are possible against a particle accelerator
   end
