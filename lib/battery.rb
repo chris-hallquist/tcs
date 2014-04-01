@@ -21,19 +21,21 @@ class Battery
     0
   end
   
-  def hit?(target)
-    TCS.roll >= to_hit(target)
+  def hit?(target, range=nil)
+    TCS.roll + standard_dms_to_hit(target) + range_dm(range) >= attack_table
   end
   
   def size_modifiers(target)
-    size = target.size
-    if size.class == Fixnum
-      return -2 if size == 0
+    size = target.tonnage_code
+    if size size == 0
+      return -2
+    elsif size < 11
       return -1
+    elsif size < 20
+      return 0
+    elsif size < 24
+      return 1
     else
-      return -1 if size == "A"
-      return 0 if ("B".."K").include?(size)
-      return 1 if ("L".."P").include?(size)
       return 2
     end
   end    
@@ -42,15 +44,11 @@ class Battery
     false
   end
 
-  def standard_dms_to_hit(target, comp_model)
+  def standard_dms_to_hit(target)
     total = comp 
     total -= target.agility
     total += size_modifiers(target)
   end
-
-  def to_hit
-    raise "Not implemented"
-  end  
   
   def uniq?
     @uniq = count == 1 if @uniq == nil
@@ -59,6 +57,9 @@ class Battery
 end
 
 class BeamWeapon < Battery
+  def attack_table
+    8 - factor / 2
+  end
 end
 
 class EnergyWeapon < BeamWeapon
@@ -69,6 +70,10 @@ class EnergyWeapon < BeamWeapon
   
   def energy
     factor * turrets * 2
+  end
+
+  def range_dm(range)
+    range == :long ? 99 : 0
   end
 
   def tons
@@ -100,6 +105,10 @@ class Laser < BeamWeapon
     count * turrets
   end
   
+  def range_dm
+    range == :short ? -1 : 0
+  end
+  
   def tons
     count * turrets
   end
@@ -126,6 +135,16 @@ class Laser < BeamWeapon
 end
 
 class MesonGun < Battery
+  def attack_table
+    if factor < 3
+      return 9
+    elsif factor < 13
+      return 9 - (factor + 2) / 3
+    else
+      return 4
+    end
+  end
+
   def cost
     return [10_000,
             12_000,
@@ -166,6 +185,10 @@ class MesonGun < Battery
             1_200,
             1_2000][factor - 10]
   end
+
+  def range_dm(range)
+    range == :short ? 2 : 0
+  end
   
   def spinal?
     true
@@ -199,6 +222,10 @@ class Missile < Battery
     @type=type
   end
   
+  def attack_table
+    7 - (factor + 1) / 2
+  end
+  
   def cost
     if factor == 9
       return count * 20_000_000
@@ -207,6 +234,10 @@ class Missile < Battery
     else
       return count * turrets * 750_000
     end
+  end
+  
+  def range_dm(range)
+    range == :short ? -1 : 0
   end
   
   def tons
@@ -288,6 +319,10 @@ class ParticleAccelerator < Battery
     end
   end
   
+  def range_dm(0)
+    0
+  end
+  
   def roll_damage
   
   end
@@ -297,6 +332,10 @@ class ParticleAccelerator < Battery
     @spinal
   end
   
+  def to_hit(target, range)
+    attack_table - standard_dms_to_hit(target)
+  end
+
   def tons
     if factor == 4
       return count * 50
@@ -324,11 +363,7 @@ class ParticleAccelerator < Battery
     else
       return 0
     end
-  end
-  
-  def to_hit(target)
-    attack_table - standard_dms_to_hit
-  end
+  end  
 end
 
 class Repulsor < Battery
