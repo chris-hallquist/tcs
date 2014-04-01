@@ -610,6 +610,12 @@ class Ship
     nil
   end
   
+  def sync_battery_comps
+    batteries.each_value do |battery|
+      battery.comp = comp_model
+    end
+  end
+  
   def tonnage_code
     @tonnage_code ||= tonnage_code!
   end

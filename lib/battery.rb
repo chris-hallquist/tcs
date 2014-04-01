@@ -1,8 +1,9 @@
-require './lib/ship'
 require './lib/damage'
+require './lib/ship'
+require './lib/TCS'
 
 class Battery
-  attr_accessor :factor, :count, :fired_count
+  attr_accessor :factor, :count, :fired_count, :comp
   
   def initialize(factor, count)
     @factor = factor
@@ -20,16 +21,8 @@ class Battery
     0
   end
   
-  def fire(target)
-    if roll > to_hit(target) && defenses_penetrated?
-      # proceed to the damage tables
-    end
-  end
-
-  def roll(n=2)
-    sum = 0
-    n.times { sum += rand(6) + 1 }
-    sum
+  def hit?(target)
+    TCS.roll >= to_hit(target)
   end
   
   def size_modifiers(target)
@@ -49,8 +42,8 @@ class Battery
     false
   end
 
-  def standard_dms_to_hit(target)
-    total = @ship.comp 
+  def standard_dms_to_hit(target, comp_model)
+    total = comp 
     total -= target.agility
     total += size_modifiers(target)
   end
@@ -238,22 +231,18 @@ end
 
 class ParticleAccelerator < Battery
   def attack_table
-    if factor.is_a? Fixnum
-      if factor < 3
-        return 10 - factor
-      else
-        return 9 - (factor + 1)/2
-      end
+    if factor < 3
+      return 10 - factor
+    elsif factor < 10
+      return 9 - (factor + 1)/2
+    elsif factor < 15
+      return 3
+    elsif factor < 20
+      return 2
+    elsif factor < 25
+      return 1
     else
-      if ("A".."E").include?(factor)
-        return 3
-      elsif ("F".."K").include?(factor)
-        return 2
-      elsif ("L".."Q").include?(factor)
-        return 1
-      else
-        return 0
-      end
+      return 0
     end
   end
   
@@ -338,7 +327,7 @@ class ParticleAccelerator < Battery
   end
   
   def to_hit(target)
-    attack_table + standard_dms_to_hit
+    attack_table - standard_dms_to_hit
   end
 end
 
