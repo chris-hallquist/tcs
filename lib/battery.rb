@@ -5,9 +5,10 @@ require './lib/TCS'
 class Battery
   attr_accessor :factor, :count, :fired_count, :comp
   
-  def initialize(factor, count)
+  def initialize(factor, count, comp)
     @factor = factor
     @count = count
+    @comp = comp
     @fired_count = 0
     spinal?
     uniq?
@@ -27,7 +28,7 @@ class Battery
   
   def size_modifiers(target)
     size = target.tonnage_code
-    if size size == 0
+    if size == 0
       return -2
     elsif size < 11
       return -1
@@ -46,7 +47,7 @@ class Battery
 
   def standard_dms_to_hit(target)
     total = comp 
-    total -= target.agility
+    total -= target.agility_with_tanks
     total += size_modifiers(target)
   end
   
@@ -92,8 +93,8 @@ end
 class Laser < BeamWeapon
   attr_accessor :type
   
-  def initialize(factor, count, type=:beam)
-    super(factor, count)
+  def initialize(factor, count, comp, type=:beam)
+    super(factor, count, comp)
     @type=type
   end
   
@@ -217,8 +218,8 @@ class MesonGun < Battery
 end
 
 class Missile < Battery
-  def initialize(factor, count, type=:nuc)
-    super(factor, count)
+  def initialize(factor, count, comp, type=:nuc)
+    super(factor, count, comp)
     @type=type
   end
   
@@ -319,7 +320,7 @@ class ParticleAccelerator < Battery
     end
   end
   
-  def range_dm(0)
+  def range_dm(range)
     0
   end
   
