@@ -74,6 +74,14 @@ class Fleet
     end
   end
   
+  def reset_fired_counts
+    ships.each do |ship|
+      ship.batteries.each_value do |obj|
+        obj.fired_count = 0
+      end
+    end
+  end
+  
   def ships!
     result = []
     @ship_classes.each_with_index do |ship_class, index|

@@ -8,7 +8,7 @@ class Ship
   attr_accessor :meson_screen, :missile, :missile_count, :nuc_damp, :options
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
   attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
-  attr_writer :comp_model
+  attr_writer :batteries, :comp_model
   
   REPAIRABLE = [
     :computer,

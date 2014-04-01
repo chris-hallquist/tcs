@@ -1,11 +1,13 @@
 require './lib/ship'
+require './lib/damage'
 
 class Battery
-  attr_accessor :factor, :count
+  attr_accessor :factor, :count, :fired_count
   
   def initialize(factor, count)
     @factor = factor
     @count = count
+    @fired_count = 0
     spinal?
     uniq?
   end

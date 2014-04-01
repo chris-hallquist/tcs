@@ -4,8 +4,17 @@ require './lib/TCS'
 class Damage
   REPAIRABLE = [
     :computer,
-    :energy_weapon
+    :energy_weapon,
     :laser,
+    :maneuver,
+    :meson_gun,
+    :meson_screen,
+    :missile,
+    :nuc_damp,
+    :particle_acc,
+    :power,
+    :repulsor,
+    :sand
     ]
   
   def self.bridge_destroyed(ship)

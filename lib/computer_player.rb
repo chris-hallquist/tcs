@@ -1,6 +1,6 @@
 class ComputerPlayer
   WEAPONS = [
-    :energy_weapon
+    :energy_weapon,
     :laser,
     :meson_gun,
     :missile,
