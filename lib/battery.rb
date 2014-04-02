@@ -14,7 +14,7 @@ class Battery
     uniq?
   end
   
-  def defenses_penetrated?(target)
+  def defenses_penetrated?(target, active_ds)
     raise "Not implemented"
   end
   
@@ -69,7 +69,7 @@ class BeamWeapon < Battery
   
   def defenses_penetrated?(target, active_ds)
     active_ds.none? do |d|
-      d.class == SandCaster && d.factor > 0
+      d.class == SandCaster && d.factor > 0 &&
         TCS.roll + dms_to_penetrate >= to_penetrate(d) 
     end
   end
@@ -215,9 +215,9 @@ class MesonGun < Battery
     if target.meson_screen == 0
       return true
     elsif factor < 10
-      TCS.roll + dms_to_penetrate > 16 - factor / 2
+      TCS.roll + dms_to_penetrate >= 16 - factor / 2
     else
-      TCS.roll + dms_to_penetrate > 9 - (factor - 9) / 2
+      TCS.roll + dms_to_penetrate >= 9 - (factor - 10) / 2
     end
   end
   
@@ -317,8 +317,37 @@ class Missile < Battery
     end
   end
   
+  def defenses_penetrated?(target, active_ds)
+    return false unless penetrate_nuc_damp?(target)
+    active_ds.none? do |d|
+      if (d.class == SandCaster || d.class <= BeamWeapon) && d.factor > 0
+        TCS.roll + dms_to_penetrate >= to_penetrate_sob(d)
+      elsif d.class == Repulsor && d.factor > 0
+        TCS.roll + dms_to_penetrate >= to_penetrate_repulsor(d)
+      else
+        true
+      end
+    end
+  end
+  
+  def penetrate_nuc_dam?(target)
+    if target.nuc_damp == 0 || type != :nuc
+      return true
+    else
+      TCS.roll + dms_to_penetrate >= 11 - factor
+    end
+  end
+  
   def range_dm(range)
     range == :short ? -1 : 0
+  end
+  
+  def to_penetrate_repulsor(d)
+    15 - factor + d.factor
+  end
+  
+  def to_penetrate_sob(d)
+    5 - factor + d.factor
   end
   
   def tons
