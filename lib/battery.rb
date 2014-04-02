@@ -208,7 +208,7 @@ class MesonGun < Battery
   end
 
   def penetrate_config?(target)
-
+    TCS.roll + dms_to_penetrate >= to_penetrate_config(target)
   end
   
   def penetrate_screen?(target)
@@ -225,26 +225,44 @@ class MesonGun < Battery
     if factor < 10
       case target.config
       when 1
+        (39 - factor) / 3
       when 2
+        (33 - factor) / 3
       when 3
+        (31 - factor) / 3
       when 4
+        (23 - factor) / 3
       when 5
+        (19 - factor) / 3
       when 6
+        (25 - factor) / 3
       when 7
+        (47 - factor) / 3
       when 8
+        (15 - factor) / 3
       when 9
+        (43 - factor) / 3
       end
     else
       case target.config
       when 1
+        8 - (factor - 10) / 3
       when 2
+        7 - (factor - 9) / 3
       when 3
+        6 - (factor - 8) / 3
       when 4
+        3 - (factor - 9) / 3
       when 5
+        2 - (factor - 8) / 3
       when 6
+        5 - (factor - 10) / 3
       when 7
+        11 - (factor - 9) / 3
       when 8
+        0
       when 9
+        10 - (factor - 8) / 3
       end
     end
   end
