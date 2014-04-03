@@ -7,6 +7,10 @@ class StarshipCombat
     @round = 1
   end
   
+  def both_fleets(method, *args)
+    [fleet1, fleet2].each { |fleet| fleet.send(method, *args) }
+  end
+  
   def breakthrough_step
     fleet1_can_fire = fleet1.battle_line.any? { |ship| ship.can_fire? }
     fleet2_can_fire = fleet2.battle_line.any? { |ship| ship.can_fire? }
@@ -25,8 +29,17 @@ class StarshipCombat
   end
   
   def combat_step(breakthrough=false)
-    @fleet1_dup = fleet1.deep_dup
-    @fleet2_dup = fleet2.deep_dup
+    both_fleets(:reset_fired_counts)
+    i = 0
+    while i < fleet1.size && i < fleet2.size
+      # Ships need to be sorted by size first
+      # TODO: Write expose_to_fire
+      attacker.ships[i].expose_to_fire(defender) if attacker.ships[i]
+      defender.ships[i].expose_to_fire(attacker) if attacker.ships[i]
+    end
+    both_fleets(:apply_damage)
+    # Need to implement special rules for damage 
+    # for spinal mounts and critical hits
   end
   
   def determine_initiative
@@ -56,10 +69,10 @@ class StarshipCombat
   end
   
   def form_lines
-    [fleet1, fleet2].each { |fleet| fleet.form_lines }
+    both_fleets(:form_lines)
   end
   
   def repair_step
-    [fleet1, fleet2].each { |fleet| fleet.repair }
+    both_fleets(:repair)
   end
 end

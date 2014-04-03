@@ -97,6 +97,10 @@ class Fleet
     result
   end
   
+  def size
+    ships.size
+  end
+  
   def TCS_valid?
     return false unless ships.all? do |ship| 
       ship.valid? && ship.jump_with_tanks > 2 && 
