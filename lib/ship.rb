@@ -9,6 +9,7 @@ class Ship
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
   attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
   attr_writer :batteries, :comp_model
+  attr_accessor :shadow
   
   REPAIRABLE = [
     :computer,
@@ -60,6 +61,7 @@ class Ship
     batteries
     has_non_spinal?
     spinal_mount
+    @shadow = self.deep_dup
   end
   
   def agility
@@ -105,14 +107,15 @@ class Ship
   end
   
   def batteries!
+    effective_comp = (hits[:bridge_destroyed] ? comp_model / 2 : comp_model)
     @batteries = {}
     if energy_weapon > 0 && energy_weapon_count > 0
-      args = [energy_weapon, energy_weapon_count, comp_model]
+      args = [energy_weapon, energy_weapon_count, effective_comp]
       args << options[:energy_weapon_type] if options[:energy_weapon_type]
       @batteries[:energy_weapon] = EnergyWeapon.new(*args)
     end
     if laser > 0 && laser_count > 0
-      args = [laser, laser_count, comp_model]
+      args = [laser, laser_count, effective_comp]
       args << options[:laser_type] if options[:laser_type]
       @batteries[:laser] = Laser.new(*args)
     end
@@ -120,11 +123,11 @@ class Ship
       @batteries[:meson_gun] = MesonGun.new(
         meson_gun, 
         meson_gun_count, 
-        comp_model
+        effective_comp
       )
     end
     if missile > 0 && missile_count > 0
-      args = [missile, missile_count, comp_model]
+      args = [missile, missile_count, effective_comp]
       args << options[:missile_type] if options[:missile_type]
       @batteries[:missile] = Missile.new(*args)
     end
@@ -132,14 +135,18 @@ class Ship
       @batteries[:particle_acc] = ParticleAccelerator.new(
         particle_acc, 
         particle_acc_count,
-        comp_model
+        effective_comp
       )
     end
     if repulsor > 0 && repulsor_count > 0
-      @batteries[:repulsor] = Repulsor.new(repulsor, repulsor_count, comp_model)
+      @batteries[:repulsor] = Repulsor.new(
+        repulsor, 
+        repulsor_count, 
+        effective_comp
+      )
     end
     if sand > 0 && sand_count > 0
-      @batteries[:sand] = SandCaster.new(sand, sand_count, comp_model)
+      @batteries[:sand] = SandCaster.new(sand, sand_count, effective_comp)
     end
     @batteries
   end

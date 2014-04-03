@@ -93,6 +93,10 @@ class EnergyWeapon < BeamWeapon
     range == :long ? 99 : 0
   end
 
+  def roll_damage(target, firing_player)
+    Damage.surface_explosion(target.shadow, firing_player, 6 + target.armor)
+  end
+
   def tons
     factor * turrets * 2
   end
@@ -124,6 +128,11 @@ class Laser < BeamWeapon
   
   def range_dm
     range == :short ? -1 : 0
+  end
+  
+  def roll_damage(target, firing_player)
+    mods = 6 + target.armor + (type == :pulse ? -2 : 0)
+    Damage.surface_explosion(target.shadow, firing_player, mods)
   end
   
   def tons
@@ -219,6 +228,12 @@ class MesonGun < Battery
     else
       TCS.roll + dms_to_penetrate >= 9 - (factor - 10) / 2
     end
+  end
+  
+  def roll_damage(target, firing_player)
+    factor < 10 ? mod =  6 : mod = 0
+    Damage.radiation(target.shadow, firing_player, mod)
+    Damage.interior_explosion(target.shadow, firing_player, mod)
   end
   
   def to_penetrate_config(target)
@@ -330,7 +345,7 @@ class Missile < Battery
     end
   end
   
-  def penetrate_nuc_dam?(target)
+  def penetrate_nuc_damp?(target)
     if target.nuc_damp == 0 || type != :nuc
       return true
     else
@@ -340,6 +355,12 @@ class Missile < Battery
   
   def range_dm(range)
     range == :short ? -1 : 0
+  end
+  
+  def roll_damage(target, firing_player)
+    se_mod = target.armor + (type == :nuc ? 0 : 6)
+    Damage.surface_explosion(target.shadow, firing_player, se_mod)
+    Damage.radiation(target.shadow, firing_player, target.armor) if type == :nuc
   end
   
   def to_penetrate_repulsor(d)
@@ -433,8 +454,10 @@ class ParticleAccelerator < Battery
     0
   end
   
-  def roll_damage
-  
+  def roll_damage(target, firing_player)
+    mods = target.armor + (factor < 10 ? 6 + 0)
+    Damage.surface_explosion(target.shadow, firing_player, mods)
+    Damage.radiation(target.shadow, firing_player, mods)
   end
   
   def spinal?
