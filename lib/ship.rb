@@ -107,7 +107,6 @@ class Ship
   end
   
   def batteries!
-    effective_comp = (hits[:bridge_destroyed] ? comp_model / 2 : comp_model)
     @batteries = {}
     if energy_weapon > 0 && energy_weapon_count > 0
       args = [energy_weapon, energy_weapon_count, effective_comp]
@@ -326,6 +325,10 @@ class Ship
   
   def drop_tank_cost
     @drop_tanks > 0 ? 1_000 * (@drop_tanks + 10) : 0
+  end
+  
+  def effective_comp
+    hits[:bridge_destroyed] ? comp_model / 2 : comp_model
   end
   
   def energy
@@ -624,7 +627,7 @@ class Ship
   
   def sync_battery_comps
     batteries.each_value do |battery|
-      battery.comp = comp_model
+      battery.comp = effective_comp
     end
   end
   

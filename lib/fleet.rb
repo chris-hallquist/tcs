@@ -11,6 +11,13 @@ class Fleet
     @ships = ships! unless is_dup
   end
   
+  def apply_damage
+    ships.map! do |ship| 
+      ship.shadow 
+      ship.sync_battery_comps
+    end
+  end
+  
   def cost
     result = 0
     ship_classes.each_with_index do |ship_class, index|
