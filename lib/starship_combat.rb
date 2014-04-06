@@ -70,6 +70,8 @@ class StarshipCombat
   
   def form_lines
     both_fleets(:form_lines)
+    fleet1.player.see_lines(fleet2)
+    fleet2.player.see_lines(fleet1)
   end
   
   def repair_step
