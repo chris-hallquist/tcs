@@ -1,4 +1,6 @@
-class ComputerPlayer
+require './lib/player'
+
+class ComputerPlayer < Player
   WEAPONS = [
     :energy_weapon,
     :laser,

@@ -1,4 +1,6 @@
-class HumanPlayer
+require './lib/player'
+
+class HumanPlayer < Player
   def assign_damage(choices)
     puts "Assign damage:"
     choose_from_list(choices)
