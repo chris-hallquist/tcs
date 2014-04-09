@@ -9,6 +9,7 @@ class Fleet
     @ship_counts = ship_counts
     @player = player
     @ships = ships! unless is_dup
+    ships.each { |ship| ship.fleet = self }
   end
   
   def apply_damage

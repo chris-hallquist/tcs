@@ -13,10 +13,16 @@ class ComputerPlayer < Player
   
   def initialize(range_pref=:long)
     @range_pref = range_pref
+  end  
+  
+  def assign_batteries(fleet, ship)
   end
   
   def assign_damage(choices)
     rand(choices.length)
+  end
+  
+  def assign_defensive_batteries(ship, hits)
   end
   
   def assign_to_battle_line?(ship)

@@ -9,7 +9,7 @@ class Ship
   attr_accessor :particle_acc, :particle_acc, :particle_acc_count, :force_field
   attr_accessor :power,  :repulsor, :repulsor_count, :sand, :sand_count, :tons
   attr_writer :batteries, :comp_model
-  attr_accessor :shadow
+  attr_accessor :fleet, :shadow
   
   REPAIRABLE = [
     :computer,
@@ -355,6 +355,16 @@ class Ship
   
   def energy_weapon_tons
     batteries[:energy_weapon] ? batteries[:energy_weapon].tons : 0
+  end
+  
+  def expose_to_fire(firing_fleet, range)
+    batteries = firing_fleet.player.assign_batteries(firing_fleet, self)
+    hits = batteries.select do |battery| 
+      battery.fired_count += 1
+      battery.fired_count <= battery.count && battery.hit?(self, range)
+    end
+    player.assign_defensive_batteries(self, hits)
+    # Annoyed, will finish later
   end
   
   def frozen_cost

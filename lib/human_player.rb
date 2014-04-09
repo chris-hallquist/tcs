@@ -6,12 +6,12 @@ class HumanPlayer < Player
     choose_from_list(choices)
   end
   
-  def choose_from_list(choices)
-    choices.each_with_index do |choice, i|
-      puts "#{i}. #{choice}"
-    end
-    puts "(Enter a number)"
-    gets.to_i
+  def assign_batteries(fleet, ship)
+    # Returns an array
+  end
+  
+  def assign_defensive_batteries(ship, hits)
+    # Returns a hash
   end
   
   def assign_to_battle_line?(ship)
@@ -20,7 +20,15 @@ class HumanPlayer < Player
     puts "Assign to line of battle? (Y/n)"
     gets.comp.downcase == "y"
   end
-  
+
+  def choose_from_list(choices)
+    choices.each_with_index do |choice, i|
+      puts "#{i}. #{choice}"
+    end
+    puts "(Enter a number)"
+    gets.to_i
+  end
+    
   def choose_range
     puts "Choose range:"
     puts "0. Short"
