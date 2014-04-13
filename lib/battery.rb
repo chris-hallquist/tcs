@@ -31,6 +31,11 @@ class Battery
       TCS.roll + standard_dms_to_hit(target) + range_dm(range) >= attack_table
   end
   
+  def roll_critical(target, firing_player)
+    criticals = [factor - target.tonnage_code - target.armor.to_i / 2, 0].max
+    criticals.times { Damage.critical(target.shadow, firing_player) }
+  end
+  
   def size_modifiers(target)
     size = target.tonnage_code
     if size == 0
@@ -54,6 +59,10 @@ class Battery
     total = comp 
     total -= target.agility_with_tanks
     total += size_modifiers(target)
+  end
+  
+  def to_hit(target, range)
+    attack_table - standard_dms_to_hit(target) + range_dm(range)
   end
   
   def uniq?
@@ -95,6 +104,7 @@ class EnergyWeapon < BeamWeapon
 
   def roll_damage(target, firing_player)
     Damage.surface_explosion(target.shadow, firing_player, 6 + target.armor)
+    roll_criticals(target, firing_player)
   end
 
   def tons
@@ -133,6 +143,7 @@ class Laser < BeamWeapon
   def roll_damage(target, firing_player)
     mods = 6 + target.armor + (type == :pulse ? -2 : 0)
     Damage.surface_explosion(target.shadow, firing_player, mods)
+    roll_criticals(target, firing_player)
   end
   
   def tons
@@ -230,10 +241,27 @@ class MesonGun < Battery
     end
   end
   
+  def range_dm(range)
+    range == :short ? 2 : 0
+  end
+  
+  def roll_criticals
+    criticals = [factor - target.tonnage_code, 0].max
+    criticals.times { Damage.critical(target.shadow, firing_player) }
+  end
+  
   def roll_damage(target, firing_player)
     factor < 10 ? mod =  6 : mod = 0
-    Damage.radiation(target.shadow, firing_player, mod)
-    Damage.interior_explosion(target.shadow, firing_player, mod)
+    extra = [factor - 9, 0].max
+    (1 + extra).times do
+      Damage.radiation(target.shadow, firing_player, mod)
+      Damage.interior_explosion(target.shadow, firing_player, mod)
+    end
+    roll_criticals(target, firing_player)
+  end
+  
+  def spinal?
+    true
   end
   
   def to_penetrate_config(target)
@@ -282,14 +310,6 @@ class MesonGun < Battery
     end
   end
 
-  def range_dm(range)
-    range == :short ? 2 : 0
-  end
-  
-  def spinal?
-    true
-  end
-  
   def tons    
     return [5_000,
             8_000,
@@ -361,6 +381,7 @@ class Missile < Battery
     se_mod = target.armor + (type == :nuc ? 0 : 6)
     Damage.surface_explosion(target.shadow, firing_player, se_mod)
     Damage.radiation(target.shadow, firing_player, target.armor) if type == :nuc
+    roll_criticals(target, firing_player)
   end
   
   def to_penetrate_repulsor(d)
@@ -456,17 +477,17 @@ class ParticleAccelerator < Battery
   
   def roll_damage(target, firing_player)
     mods = target.armor + (factor < 10 ? 6 + 0)
-    Damage.surface_explosion(target.shadow, firing_player, mods)
-    Damage.radiation(target.shadow, firing_player, mods)
+    extra = [factor - 9 - target.armor, 0].max
+    (1 + extra).times do
+      Damage.surface_explosion(target.shadow, firing_player, mods)
+      Damage.radiation(target.shadow, firing_player, mods)
+    end
+    roll_criticals(target, firing_player)
   end
   
   def spinal?
     @spinal = factor > 9 if @spinal == nil
     @spinal
-  end
-  
-  def to_hit(target, range)
-    attack_table - standard_dms_to_hit(target)
   end
 
   def tons

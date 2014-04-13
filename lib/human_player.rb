@@ -4,6 +4,7 @@ class HumanPlayer < Player
   
   def assign_batteries(fleet, ship)
     # Returns an array
+    raise "Not implemented"
   end
   
   def assign_damage(choices)
@@ -13,6 +14,7 @@ class HumanPlayer < Player
   
   def assign_defenses(ship, hits)
     # Returns a 2d array, with length equal to hits
+    raise "Not implemented"
   end
   
   def assign_to_battle_line?(ship)
@@ -40,6 +42,10 @@ class HumanPlayer < Player
     puts "1. Long"
     puts "(Enter a number)"
     gets.to_i == 0 ? :short : :long
+  end
+  
+  def see_range(range)
+    puts "Other player chooses to begin at #{range} range."
   end
   
   def select_repair(choices)

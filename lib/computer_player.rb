@@ -17,6 +17,9 @@ class ComputerPlayer < Player
   
   def assign_batteries(fleet, ship)
     # Returns an array
+    batteries = []
+    counter -= 1
+    batteries
   end
   
   def assign_damage(choices)
@@ -36,7 +39,12 @@ class ComputerPlayer < Player
   end
   
   def choose_range
+    @range = @range_pref
     @range_pref
+  end
+  
+  def see_range(range)
+    @range = range
   end
   
   def select_repair(choices)
@@ -45,5 +53,13 @@ class ComputerPlayer < Player
     else
       0
     end
+  end
+  
+  private 
+  def can_damage?(battery, ship)
+  end
+  
+  def can_hit?(battery, ship)
+    battery.to_hit(ship, @range) <= 12
   end
 end
