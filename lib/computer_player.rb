@@ -74,7 +74,6 @@ class ComputerPlayer < Player
   
   private 
   def can_damage?(battery, ship)
-    return false if battery.to_hit(ship, @range) > 12
     return true if battery.class == MesonGun
     return true if battery.class == ParticleAccelerator && 
       battery.factor - 9 - ship.armor.to_i / 2 > 0
@@ -83,5 +82,9 @@ class ComputerPlayer < Player
     mods -= 6 if battery.class == Missile && battery.type == :nuc
     mods -= 2 if battery.class == Laser && battery.type == :pulse
     mods < 20
+  end
+  
+  def can_hit?(battery, ship)
+    battery.to_hit(ship, @range) <= 12
   end
 end
