@@ -11,8 +11,10 @@ class ComputerPlayer < Player
     :sand
     ]
   
-  def initialize(range_pref=:long)
-    @range_pref = range_pref
+  def initialize(options={})
+    @defensive_energy = options[:defensive_energy] || false
+    @defensive_laser = options[:defensive_laser] || false
+    @range_pref = options[:range_pref] || :long
   end  
   
   def assign_batteries(fleet, ship)
@@ -35,6 +37,14 @@ class ComputerPlayer < Player
   
   def assign_defenses(ship, hits)
     # Returns a 2d array, with length equal to hits
+    # decide whether to fire beams defensively
+    defenses = Array.new(hits.length) { [] }
+    missile_inds 
+      b.class == Missile && can_damage?(b, ship) ? 1 : 0
+
+    beam_inds = hits.inject(0) do |n, b|
+      b.class <= BeamWeapon && can_damage?(b, ship) ? 1 : 0
+    end
   end
   
   def assign_to_battle_line?(ship)
@@ -64,6 +74,7 @@ class ComputerPlayer < Player
   
   private 
   def can_damage?(battery, ship)
+    return false if battery.to_hit(ship, @range) > 12
     return true if battery.class == MesonGun
     return true if battery.class == ParticleAccelerator && 
       battery.factor - 9 - ship.armor.to_i / 2 > 0
@@ -72,9 +83,5 @@ class ComputerPlayer < Player
     mods -= 6 if battery.class == Missile && battery.type == :nuc
     mods -= 2 if battery.class == Laser && battery.type == :pulse
     mods < 20
-  end
-  
-  def can_hit?(battery, ship)
-    battery.to_hit(ship, @range) <= 12
   end
 end
