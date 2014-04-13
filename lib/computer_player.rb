@@ -31,6 +31,10 @@ class ComputerPlayer < Player
     ship.can_fire?
   end
   
+  def begin_combat_step
+    @counter = enemy.ships.length
+  end
+  
   def choose_range
     @range_pref
   end

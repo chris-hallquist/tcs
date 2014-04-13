@@ -21,6 +21,10 @@ class HumanPlayer < Player
     puts "Assign to line of battle? (Y/n)"
     gets.comp.downcase == "y"
   end
+  
+  def begin_combat_step
+    puts "Beginning combat step"
+  end
 
   def choose_from_list(choices)
     choices.each_with_index do |choice, i|

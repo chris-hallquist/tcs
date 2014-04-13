@@ -2,13 +2,17 @@ class StarshipCombat
   attr_accessor :fleet1, :fleet2
   
   def initialize(fleet1, fleet2)
-    @fleet1 = fleet1
-    @fleet2 = fleet2
+    @fleet1, @fleet2 = fleet1, fleet2
+    player1.enemy, player2.enemy = fleet2, fleet1
     @round = 1
   end
   
   def both_fleets(method, *args)
     [fleet1, fleet2].each { |fleet| fleet.send(method, *args) }
+  end
+  
+  def both_players(method, *args)
+    [player1, player2].each { |player| player.send(method, *args) }
   end
   
   def breakthrough_step
@@ -30,6 +34,7 @@ class StarshipCombat
   
   def combat_step(breakthrough=false)
     both_fleets(:reset_fired_counts)
+    both_players(:begin_combat_step)
     i = 0
     while i < fleet1.size && i < fleet2.size
       # Ships need to be sorted by size first
@@ -69,8 +74,16 @@ class StarshipCombat
   
   def form_lines
     both_fleets(:form_lines)
-    fleet1.player.see_lines(fleet2)
-    fleet2.player.see_lines(fleet1)
+    player1.see_lines(fleet2)
+    player2.see_lines(fleet1)
+  end
+  
+  def player1
+    fleet1.player
+  end
+  
+  def player2
+    fleet2.player
   end
   
   def repair_step

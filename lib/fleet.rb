@@ -10,6 +10,7 @@ class Fleet
     @player = player
     @ships = ships! unless is_dup
     ships.each { |ship| ship.fleet = self }
+    player.fleet = self
   end
   
   def apply_damage
@@ -17,6 +18,7 @@ class Fleet
       ship.shadow 
       ship.sync_battery_comps
     end
+    ships.select! { |ship| !ship.hits[:perm_disabled] }
   end
   
   def cost
