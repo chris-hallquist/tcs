@@ -18,7 +18,14 @@ class ComputerPlayer < Player
   def assign_batteries(fleet, ship)
     # Returns an array
     batteries = []
-    counter -= 1
+    fleet.ships.each do |ship|
+      fleet.batteries.each_key do |obj|
+        if can_damage?(obj, ship) && can_hit?(obj, ship) && rand(@counter) == 0
+          batteries << obj 
+        end
+      end
+    end
+    @counter -= 1
     batteries
   end
   
