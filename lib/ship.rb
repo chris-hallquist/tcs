@@ -358,13 +358,18 @@ class Ship
   end
   
   def expose_to_fire(firing_fleet, range)
-    batteries = firing_fleet.player.assign_batteries(firing_fleet, self)
+    firing_player = firing_fleet.player
+    batteries = firing_player.assign_batteries(firing_fleet, self)
     hits = batteries.select do |battery| 
       battery.fired_count += 1
       battery.fired_count <= battery.count && battery.hit?(self, range)
     end
-    player.assign_defensive_batteries(self, hits)
-    # Annoyed, will finish later
+    defenses = player.assign_defenses(self, hits)
+    hits.each_with_index do |hit, i|
+      if defenses_penetrated?(self, defenses)
+        hit.roll_damage(self, firing_player)
+      end 
+    end
   end
   
   def frozen_cost

@@ -33,7 +33,6 @@ class StarshipCombat
     i = 0
     while i < fleet1.size && i < fleet2.size
       # Ships need to be sorted by size first
-      # TODO: Write expose_to_fire
       attacker.ships[i].expose_to_fire(defender) if attacker.ships[i]
       defender.ships[i].expose_to_fire(attacker) if defender.ships[i]
     end

@@ -16,13 +16,15 @@ class ComputerPlayer < Player
   end  
   
   def assign_batteries(fleet, ship)
+    # Returns an array
   end
   
   def assign_damage(choices)
     rand(choices.length)
   end
   
-  def assign_defensive_batteries(ship, hits)
+  def assign_defenses(ship, hits)
+    # Returns a 2d array, with length equal to hits
   end
   
   def assign_to_battle_line?(ship)
