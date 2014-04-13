@@ -37,14 +37,15 @@ class ComputerPlayer < Player
   
   def assign_defenses(ship, hits)
     # Returns a 2d array, with length equal to hits
-    # decide whether to fire beams defensively
     defenses = Array.new(hits.length) { [] }
-    missile_inds 
-      b.class == Missile && can_damage?(b, ship) ? 1 : 0
-
-    beam_inds = hits.inject(0) do |n, b|
-      b.class <= BeamWeapon && can_damage?(b, ship) ? 1 : 0
-    end
+    missile_inds = hits.each_index.select { |i| hits[i].class == Missile }
+    beam_inds = hits.each_index.select { |i| hits[i].class <= BeamWeapon }
+    # TODO:
+    # Assign Repulsors
+    assign_defense!(ship, missile_inds, :repulsor, defenses)
+    assign_defense!(ship, missile_inds + beam_inds, :sand, defenses)
+    assign_defense!(ship, missile_inds, :energy_weapon, defenses)
+    assign_defense!(ship, missile_inds, :laser, defenses)
   end
   
   def assign_to_battle_line?(ship)
@@ -73,6 +74,15 @@ class ComputerPlayer < Player
   end
   
   private 
+  def assign_defense!(ship, hit_inds, type, defenses)
+    return if (type == :energy_weapon && !@defensive_energy) || 
+      (type == :laser && !@defensive_laser)
+    l = hit_inds.length
+    battery = ship.batteries[type]
+    count = battery.count
+    (0...count).each { |i| defenses[hit_inds[i % l]] << battery }
+  end
+  
   def can_damage?(battery, ship)
     return true if battery.class == MesonGun
     return true if battery.class == ParticleAccelerator && 

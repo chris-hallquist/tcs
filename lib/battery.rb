@@ -78,7 +78,8 @@ class BeamWeapon < Battery
   
   def defenses_penetrated?(target, active_ds)
     active_ds.none? do |d|
-      d.class == SandCaster && d.factor > 0 &&
+      d.fired_count += 1
+      d.class == SandCaster && d.factor > 0 && d.fired_count <= d.count &&
         TCS.roll + dms_to_penetrate >= to_penetrate(d) 
     end
   end
@@ -355,7 +356,10 @@ class Missile < Battery
   def defenses_penetrated?(target, active_ds)
     return false unless penetrate_nuc_damp?(target)
     active_ds.none? do |d|
-      if (d.class == SandCaster || d.class <= BeamWeapon) && d.factor > 0
+      d.fired_count += 1
+      if d.fired_count > d.count
+        false
+      elsif (d.class == SandCaster || d.class <= BeamWeapon) && d.factor > 0
         TCS.roll + dms_to_penetrate >= to_penetrate_sob(d)
       elsif d.class == Repulsor && d.factor > 0
         TCS.roll + dms_to_penetrate >= to_penetrate_repulsor(d)
