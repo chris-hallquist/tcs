@@ -1,7 +1,7 @@
 require './lib/ship'
 require './lib/TCS'
 
-class Damage
+module Damage
   REPAIRABLE = [
     :computer,
     :energy_weapon,
@@ -17,7 +17,7 @@ class Damage
     :sand
     ]
   
-  def self.bridge_destroyed(ship)
+  def bridge_destroyed(ship)
     # Critical only
 
     # Will need to be modified to handle 
@@ -25,7 +25,7 @@ class Damage
     ship.hits[:bridge_destroyed] = true
   end
 
-  def self.computer(ship, n, radiation=false)
+  def computer(ship, n, radiation=false)
     # Can be repaired
     return if radiation && ship.comp_fib?
     n = ship.comp_model if ship.comp_model < n
@@ -34,13 +34,13 @@ class Damage
     ship.hits[:computer] << n
   end
   
-  def self.computer_destroyed(ship, n)
+  def computer_destroyed(ship, n)
     # Critical only
     ship.hits[:computer] = []
     ship.comp_mode = 0
   end
   
-  def self.crew(ship, n)
+  def crew(ship, n)
     # Can be replaced by frozen watch
     ship.hits[:crew] ||= 0
     ship.hits[:crew] += n
@@ -48,7 +48,7 @@ class Damage
      !ship.options[:frozen_watch] 
   end
   
-  def self.critical(ship, firing_player)
+  def critical(ship, firing_player)
     ship.armor -= 1 if ship.armor > 1
     case TCS.roll
     when 2
@@ -76,27 +76,27 @@ class Damage
     end
   end
   
-  def self.frozen_watch_ships_troops_dead(ship)
+  def frozen_watch_ships_troops_dead(ship)
     # Critical only
     ship.options[:frozen_watch] = false
   end
   
-  def self.fuel(ship, n)
+  def fuel(ship, n)
     ship.hits[:fuel] ||= 0
     ship.hits[:fuel] += [10, ship.fuel * n / 100.0].max
     ship.hits[:perm_disabled] = true if ship.hits[:fuel] >= ship.fuel 
   end
   
-  def self.fuel_tanks_shattered(ship)
+  def fuel_tanks_shattered(ship)
     ship.hits[:perm_disabled] = true
   end
   
-  def self.hangars_boat_deck_destroyed(ship)
+  def hangars_boat_deck_destroyed(ship)
     # Critical only
     # Doesn't matter, if ships launched before combat
   end
   
-  def self.interior_explosion(ship, firing_player, mod=0)
+  def interior_explosion(ship, firing_player, mod=0)
     case TCS.roll + mod
     when 2..4
       Damage.critical(ship, firing_player)
@@ -137,18 +137,18 @@ class Damage
     end
   end
   
-  def self.jump(ship, n)
+  def jump(ship, n)
     # Can be repaired
     # Repairability will be ignored due to irrelevance to TCS
     # In fact, this whole thing is irrelevant to TCS
   end
   
-  def self.jump_drive_disabled(ship)
+  def jump_drive_disabled(ship)
     # Critical only
     # Similarly irrelevant
   end
   
-  def self.maneuver(ship, n)
+  def maneuver(ship, n)
     # Can be repaired
     n = ship.maneuver if ship.maneuver < n
     ship.maneuver -= n
@@ -156,12 +156,12 @@ class Damage
     ship.hits[:maneuver] << n
   end
   
-  def self.maneuver_drive_disabled(ship)
+  def maneuver_drive_disabled(ship)
     ship.maneuver = 0
     ship.hits[:maneuver] = []
   end
   
-  def self.one_screen_disabled(ship, firing_player)
+  def one_screen_disabled(ship, firing_player)
     # Critical only
     if ship.meson_screen = 0
       ship.nuc_damp = 0
@@ -177,7 +177,7 @@ class Damage
     end
   end
   
-  def self.power(ship, n)
+  def power(ship, n)
     # Can be repaired
     n = ship.power if ship.power < n
     ship.power -= n
@@ -185,13 +185,13 @@ class Damage
     ship.hits[:power] << n
   end
   
-  def self.power_plant_disabled(ship)
+  def power_plant_disabled(ship)
     # Critical only
     ship.hits[:power] = []
     ship.power = 0
   end
   
-  def self.radiation(ship, firing_player, mod=0)
+  def radiation(ship, firing_player, mod=0)
     case TCS.roll + mod
     when 2
       critical(ship, firing_player)
@@ -226,7 +226,7 @@ class Damage
     end
   end
   
-  def self.screen(ship, firing_player, n)
+  def screen(ship, firing_player, n)
     # Can be repaired
     if ship.meson_screen = 0
       ship.hits[:nuc_damp] = [1] if ship.nuc_damp > 0
@@ -247,12 +247,12 @@ class Damage
     end
   end
   
-  def self.ship_vaporized(ship)
+  def ship_vaporized(ship)
     # Critical only
     ship.hits[:perm_disabled] = true
   end
   
-  def self.surface_explosion(ship, firing_player, mod=0)
+  def surface_explosion(ship, firing_player, mod=0)
     case TCS.roll + mod
     when 2
       critical(ship, firing_player)
@@ -287,7 +287,7 @@ class Damage
     end
   end
   
-  def self.spinal_mount_fire_control_out(ship)
+  def spinal_mount_fire_control_out(ship)
     # Critical only
     if rand(2) == 0
       spinal_mount = ship.spinal_mount
@@ -313,7 +313,7 @@ class Damage
     end
   end
   
-  def self.weapon(ship, firing_player, n)
+  def weapon(ship, firing_player, n)
     # Can be repaired
     return if ship.batteries_remaining.empty?
     valid_targets = ship.batteries_least_damaged.keys
