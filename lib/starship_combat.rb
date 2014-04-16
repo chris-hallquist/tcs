@@ -35,15 +35,22 @@ class StarshipCombat
   def combat_step(breakthrough=false)
     both_fleets(:reset_fired_counts)
     both_players(:begin_combat_step)
-    i = 0
-    while i < fleet1.size && i < fleet2.size
+    
+    n = [fleet1.size, fleet1.size].max
+    (0...n).each do |i|
       # Ships need to be sorted by size first
-      attacker.ships[i].expose_to_fire(defender) if attacker.ships[i]
-      defender.ships[i].expose_to_fire(attacker) if defender.ships[i]
+      unless breakthrough
+        attacker.battle_line[i].expose_to_fire(defender) if attacker.ships[i]
+        defender.battle_line[i].expose_to_fire(attacker) if defender.ships[i]
+      else
+        if breakthrough == :fleet1
+          fleet2.reserve[i].expose_to_fire(fleet1) if fleet2.reserve[i]
+        elsif breakthrough == :fleet2
+          fleet1.reserve[i].expose_to_fire(fleet2) if fleet1.reserve[i]
+        end
+      end
     end
     both_fleets(:apply_damage)
-    # Need to implement special rules for damage 
-    # for spinal mounts and critical hits
   end
   
   def determine_initiative
