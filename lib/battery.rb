@@ -480,7 +480,7 @@ class ParticleAccelerator < Battery
   end
   
   def roll_damage(target, firing_player)
-    mods = target.armor + (factor < 10 ? 6 + 0)
+    mods = target.armor + (factor < 10 ? 6 : 0)
     extra = [factor - 9 - target.armor, 0].max
     (1 + extra).times do
       Damage.surface_explosion(target.shadow, firing_player, mods)
