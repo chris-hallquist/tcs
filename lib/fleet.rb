@@ -122,3 +122,9 @@ class Lenat < Fleet
     )
   end
 end
+
+class OneEurisko < Fleet
+  def initialize(player)
+    super([Eurisko.new], [1], player)
+  end
+end

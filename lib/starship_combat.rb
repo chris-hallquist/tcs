@@ -1,3 +1,5 @@
+require './lib/fleet'
+
 class StarshipCombat
   attr_accessor :fleet1, :fleet2
   
@@ -95,5 +97,13 @@ class StarshipCombat
   
   def repair_step
     both_fleets(:repair)
+  end
+  
+  def run
+    while fleet1.size > 0 && fleet2.size > 0
+      combat_step
+    end
+    puts "fleet1 wins!" if fleet1.size > 0
+    puts "fleet2 wins!" if fleet2.size > 0
   end
 end
