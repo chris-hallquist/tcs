@@ -103,7 +103,5 @@ class StarshipCombat
     while fleet1.size > 0 && fleet2.size > 0
       combat_step
     end
-    puts "fleet1 wins!" if fleet1.size > 0
-    puts "fleet2 wins!" if fleet2.size > 0
   end
 end
