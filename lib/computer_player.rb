@@ -15,6 +15,7 @@ class ComputerPlayer < Player
     @defensive_energy = options[:defensive_energy] || false
     @defensive_laser = options[:defensive_laser] || false
     @range_pref = options[:range_pref] || :long
+    super(options)
   end  
   
   def assign_batteries(fleet, ship)
