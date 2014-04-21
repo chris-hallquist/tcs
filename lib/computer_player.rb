@@ -21,7 +21,7 @@ class ComputerPlayer < Player
     # Returns an array
     batteries = []
     fleet.battle_line.each do |firing_ship|
-      firing_ship.batteries.each_key do |obj|
+      firing_ship.batteries.each_value do |obj|
         if can_damage?(obj, ship) && can_hit?(obj, ship) && rand(@counter) == 0
           batteries << obj 
         end
@@ -40,9 +40,8 @@ class ComputerPlayer < Player
     defenses = Array.new(hits.length) { [] }
     missile_inds = hits.each_index.select { |i| hits[i].class == Missile }
     beam_inds = hits.each_index.select { |i| hits[i].class <= BeamWeapon }
-    # TODO:
-    # Assign Repulsors
-    assign_defense!(ship, missile_inds, :repulsor, defenses)
+
+    assign_defense!(ship, missile_inds, :repulsor, defenses) 
     assign_defense!(ship, missile_inds + beam_inds, :sand, defenses)
     assign_defense!(ship, missile_inds, :energy_weapon, defenses)
     assign_defense!(ship, missile_inds, :laser, defenses)
@@ -61,6 +60,9 @@ class ComputerPlayer < Player
     @range_pref
   end
   
+  def see_lines(fleet)
+  end
+  
   def see_range(range)
     @range = range
   end
@@ -75,10 +77,12 @@ class ComputerPlayer < Player
   
   private 
   def assign_defense!(ship, hit_inds, type, defenses)
-    return if (type == :energy_weapon && !@defensive_energy) || 
-      (type == :laser && !@defensive_laser)
-    l = hit_inds.length
     battery = ship.batteries[type]
+    
+    return if (type == :energy_weapon && !@defensive_energy) || 
+      (type == :laser && !@defensive_laser) || !battery
+      
+    l = hit_inds.length
     count = battery.count
     (0...count).each { |i| defenses[hit_inds[i % l]] << battery }
   end

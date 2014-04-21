@@ -334,6 +334,8 @@ class MesonGun < Battery
 end
 
 class Missile < Battery
+  attr_accessor :type
+  
   def initialize(factor, count, comp, type=:nuc)
     super(factor, count, comp)
     @type=type

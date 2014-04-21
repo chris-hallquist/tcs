@@ -364,7 +364,7 @@ class Ship
       battery.fired_count += 1
       battery.fired_count <= battery.count && battery.hit?(self, range)
     end
-    defenses = player.assign_defenses(self, hits)
+    defenses = fleet.player.assign_defenses(self, hits)
     hits.each_with_index do |hit, i|
       if defenses_penetrated?(self, defenses)
         hit.roll_damage(self, firing_player)

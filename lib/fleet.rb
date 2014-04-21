@@ -47,9 +47,9 @@ class Fleet
     @reserve = []
     ships.each do |ship|
       if player.assign_to_battle_line?(ship) 
-        @battle_line < ship 
+        @battle_line << ship 
       else
-        @reserve < ship
+        @reserve << ship
       end
     end
   end

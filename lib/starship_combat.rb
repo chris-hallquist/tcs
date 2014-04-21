@@ -1,7 +1,7 @@
 require './lib/fleet'
 
 class StarshipCombat
-  attr_accessor :fleet1, :fleet2
+  attr_accessor :fleet1, :fleet2, :attacker, :defender
   
   def initialize(fleet1, fleet2)
     @fleet1, @fleet2 = fleet1, fleet2
@@ -40,10 +40,13 @@ class StarshipCombat
     
     n = [fleet1.size, fleet1.size].max
     (0...n).each do |i|
-      # Ships need to be sorted by size first
       unless breakthrough
-        attacker.battle_line[i].expose_to_fire(defender) if attacker.ships[i]
-        defender.battle_line[i].expose_to_fire(attacker) if defender.ships[i]
+        if attacker.battle_line[i]
+          attacker.battle_line[i].expose_to_fire(defender, @range)
+        end 
+        if defender.battle_line[i]
+          defender.battle_line[i].expose_to_fire(attacker, @range)
+        end
       else
         if breakthrough == :fleet1
           fleet2.reserve[i].expose_to_fire(fleet1) if fleet2.reserve[i]
@@ -66,8 +69,10 @@ class StarshipCombat
     roll2 = TCS.roll + fleet2_dm
     if roll1 > roll2
       @attacker = fleet1
+      @defender = fleet2
     elsif roll2 > roll1
       @attacker = fleet2
+      @defender = fleet1
     else
       determine_initiative
     end
@@ -101,7 +106,7 @@ class StarshipCombat
   
   def run
     while fleet1.size > 0 && fleet2.size > 0
-      combat_step
+      combat_round
     end
   end
 end
