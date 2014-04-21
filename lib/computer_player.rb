@@ -45,6 +45,7 @@ class ComputerPlayer < Player
     assign_defense!(ship, missile_inds + beam_inds, :sand, defenses)
     assign_defense!(ship, missile_inds, :energy_weapon, defenses)
     assign_defense!(ship, missile_inds, :laser, defenses)
+    defenses
   end
   
   def assign_to_battle_line?(ship)
@@ -78,11 +79,11 @@ class ComputerPlayer < Player
   private 
   def assign_defense!(ship, hit_inds, type, defenses)
     battery = ship.batteries[type]
+    l = hit_inds.length
     
     return if (type == :energy_weapon && !@defensive_energy) || 
-      (type == :laser && !@defensive_laser) || !battery
+      (type == :laser && !@defensive_laser) || !battery || l == 0
       
-    l = hit_inds.length
     count = battery.count
     (0...count).each { |i| defenses[hit_inds[i % l]] << battery }
   end

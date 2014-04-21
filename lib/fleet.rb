@@ -9,16 +9,18 @@ class Fleet
     @ship_counts = ship_counts
     @player = player
     @ships = ships! unless is_dup
-    ships.each { |ship| ship.fleet = self }
     player.fleet = self
   end
   
   def apply_damage
-    ships.map! do |ship| 
-      ship.shadow 
-      ship.sync_battery_comps
-    end
+    ships.map! { |ship| ship.shadow }
+    ships.each { |ship| ship.sync_battery_comps }
+    ships.each { |ship| ship.shadow = ship.deep_dup }
     ships.select! { |ship| !ship.hits[:perm_disabled] }
+  end
+  
+  def can_fire?
+    ships.any? { |ship| ship.can_fire? }
   end
   
   def cost
@@ -94,8 +96,11 @@ class Fleet
   
   def ships!
     result = []
-    @ship_classes.each_with_index do |ship_class, index|
-      result = result + [ship_class.deep_dup] * ship_counts[index]
+    @ship_classes.each_with_index do |ship_class, i|
+      ship_class.fleet = self
+      ship_class.shadow.fleet = self
+      j = 0
+      ship_counts[i].times { result << ship_class.deep_dup }
     end
     result
   end

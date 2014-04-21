@@ -31,7 +31,7 @@ class Battery
       TCS.roll + standard_dms_to_hit(target) + range_dm(range) >= attack_table
   end
   
-  def roll_critical(target, firing_player)
+  def roll_criticals(target, firing_player)
     criticals = [factor - target.tonnage_code - target.armor.to_i / 2, 0].max
     criticals.times { Damage.critical(target.shadow, firing_player) }
   end

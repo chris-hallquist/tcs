@@ -319,7 +319,7 @@ class Ship
     batteries.each do |sym, obj|
       new_ship.batteries[sym] = obj.dup
     end
-    
+        
     new_ship
   end
   
@@ -366,7 +366,7 @@ class Ship
     end
     defenses = fleet.player.assign_defenses(self, hits)
     hits.each_with_index do |hit, i|
-      if defenses_penetrated?(self, defenses)
+      if hit.defenses_penetrated?(self, defenses[i])
         hit.roll_damage(self, firing_player)
       end 
     end

@@ -104,9 +104,10 @@ class StarshipCombat
     both_fleets(:repair)
   end
   
-  def run
-    while fleet1.size > 0 && fleet2.size > 0
+  def run(max_rounds=nil)
+    while fleet1.can_fire? && fleet2.can_fire?
       combat_round
+      return if max_rounds && @round > max_rounds
     end
   end
 end
