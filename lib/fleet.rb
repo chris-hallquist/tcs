@@ -133,3 +133,15 @@ class OneEurisko < Fleet
     super([Eurisko.new], [1], player)
   end
 end
+
+class OneQueller < Fleet
+  def initialize(player)
+    super([Queller.new], [1], player)
+  end
+end
+
+class OneCisor < Fleet
+  def initialize(player)
+    super([Cisor.new], [1], player)
+  end
+end

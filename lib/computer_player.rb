@@ -90,6 +90,7 @@ class ComputerPlayer < Player
   end
   
   def can_damage?(battery, ship)
+    return false if battery.class == Repulsor || battery.class == SandCaster
     return true if battery.class == MesonGun
     return true if battery.class == ParticleAccelerator && 
       battery.factor - 9 - ship.armor.to_i / 2 > 0
@@ -101,6 +102,7 @@ class ComputerPlayer < Player
   end
   
   def can_hit?(battery, ship)
+    return false if battery.class == Repulsor || battery.class == SandCaster
     battery.to_hit(ship, @range) <= 12
   end
 end

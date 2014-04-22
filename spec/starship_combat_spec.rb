@@ -71,11 +71,52 @@ describe StarshipCombat do
       end
     end
     
-    it 'shoud not produce a winner in 100 rounds' do
+    it 'shoud be a stalemate after 100 rounds' do
+      srand 0
       sc.run(100)
       expect(f1.can_fire? ^ f2.can_fire?).to be_false
     end
   end
   
+  context 'when two Queller-class ships fight' do
+    let(:c1) { ComputerPlayer.new }
+    let(:c2) { ComputerPlayer.new }
+    let(:f1) { OneQueller.new(c1) }
+    let(:f2) { OneQueller.new(c2) }
+    let(:sc) { StarshipCombat.new(f1, f2) }
   
+    it 'shoud be a stalemate after 100 rounds' do
+      srand 0
+      sc.run(100)
+      expect(f1.can_fire? ^ f2.can_fire?).to be_false
+    end
+  end
+  
+  context 'when two Cisor-class ships fight' do
+    let(:c1) { ComputerPlayer.new }
+    let(:c2) { ComputerPlayer.new }
+    let(:f1) { OneCisor.new(c1) }
+    let(:f2) { OneCisor.new(c2) }
+    let(:sc) { StarshipCombat.new(f1, f2) }
+  
+    it 'shoud be a stalemate after 100 rounds' do
+      srand 0
+      sc.run(100)
+      expect(f1.can_fire? ^ f2.can_fire?).to be_false
+    end
+  end
+  
+  context 'when two copies of Lenat\'s fleet fight' do
+    let(:c1) { ComputerPlayer.new }
+    let(:c2) { ComputerPlayer.new }
+    let(:f1) { Lenat.new(c1) }
+    let(:f2) { Lenat.new(c2) }
+    let(:sc) { StarshipCombat.new(f1, f2) }
+  
+    it 'shoud be a winner after 100 rounds' do
+      srand 0
+      sc.run(100)
+      expect(f1.can_fire? ^ f2.can_fire?).to be_true
+    end
+  end
 end

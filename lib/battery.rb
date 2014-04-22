@@ -137,7 +137,7 @@ class Laser < BeamWeapon
     count * turrets
   end
   
-  def range_dm
+  def range_dm(range)
     range == :short ? -1 : 0
   end
   

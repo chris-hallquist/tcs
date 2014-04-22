@@ -555,6 +555,8 @@ class Ship
         else
           batteries[choice].count += n
         end
+      elsif choice == :computer
+        self.comp_model += n
       else
         self.send("#{choice}=", self.send(choice) + n)
       end
