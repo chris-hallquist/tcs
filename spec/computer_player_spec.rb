@@ -13,6 +13,7 @@ describe ComputerPlayer do
     let(:s1) { f1.ships[0] }
     
     it 'should assign at least one battery' do
+      sc.form_lines
       c2.begin_combat_step
       expect(c2.assign_batteries(f2, s1).size).to be > 0
     end

@@ -24,6 +24,12 @@ describe Ship do
     it 'should have cost within 3% of the official value' do
       expect((eurisko.cost / 13_030_385_000 - 1).abs).to be < 0.03
     end
+    it 'should have missile batteries with factor 3' do
+      expect(eurisko.missile).to be 3
+    end
+    it 'should have 29 missile batteries' do
+      expect(eurisko.missile_count).to be 29
+    end
   end
   context 'when ship is Cisor class' do
     it 'should have mass within 3% of the official value' do

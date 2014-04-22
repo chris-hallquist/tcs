@@ -34,10 +34,10 @@ module Damage
     ship.hits[:computer] << n
   end
   
-  def self.computer_destroyed(ship, n)
+  def self.computer_destroyed(ship)
     # Critical only
     ship.hits[:computer] = []
-    ship.comp_mode = 0
+    ship.comp_model = 0
   end
   
   def self.crew(ship, n)

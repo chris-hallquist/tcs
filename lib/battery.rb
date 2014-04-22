@@ -246,7 +246,7 @@ class MesonGun < Battery
     range == :short ? 2 : 0
   end
   
-  def roll_criticals
+  def roll_criticals(target, firing_player)
     criticals = [factor - target.tonnage_code, 0].max
     criticals.times { Damage.critical(target.shadow, firing_player) }
   end
