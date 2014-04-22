@@ -1,8 +1,15 @@
 # Introduction
 
-This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller. Historical background [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own).
+This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller. Historical background [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own). The stats for Lenat's winning fleet can be found [here](http://members.pcug.org.au/~davidjw/tavspecs/best_tml/Starships%20(HG)%20-%20Professor%20Lenat%20and%20EURISKO's%20Winning%20Fleet.htm).
 
-I'm currently still in the "translate Traveller's rules into Ruby code" stage. The machine learning stage will come later.
+At the moment, I'm *mostly* done writing the game code, and expect to begin writing the machine learning part soon. Current TODOs:
+
+1. Finish writing code for human players (may put this off, as its not the focus of the project)
+2. Fix issues with and finish implementing carried craft
+3. Implement the requirement that fleets be capable of gas giant refueling
+4. Implement different options for energy weapons
+
+# Rules Sources and Notes
 
 The Trillion Credit Squadron scenario had special rules for calculating fleet costs. Among other things, the rules specify that players must pay:
 
@@ -110,10 +117,6 @@ Engineering section will have one crewmember per 100 tons of drives. Gunnery sec
 
 Two AIs need to be written: an AI to design fleets, and an AI to play the actual game. The hard part of TCS seems to be fleet design, but the fleet design AI needs the player AI to run simulated battles, and flaws in the second AI may lead to fleets being tailored to its flaws, rather than an optimal fleet.
 
-## Fleet Design AI
-
-Synergies between different ship types are unclear, and the overwhelming majority of Lenat's winning fleet consisted of a single ship type. Therefore, first tests will assume fleets of identical ships.
-
 ## Game AI
 
 While decisions made playing the game may not be as complicated as fleet design decisions, it's still not entirely clear what the optimal strategy is. However, it seems likely that the best strategy would divide fire evenly among those ships still able to fight. 
@@ -126,11 +129,7 @@ It is unclear how useful making repairs mid-combat is, so this will be reserved 
 
 The rules for boarding and ship's troops seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
 
-Rules for carried craft will not be implemented until I begin exploring heterogenous fleets.
-
 The rule that sufficiently similar, but distinct, ship designs get a discount will not be implemented for now.
-
-The rule that the fleet must be capable of gas giant refueling amounts to a rule that the fleet must have at least one streamlined or semi-streamlined ship, and will be ignored until I begin exploring heterogeneous fleets.
 
 Because TCS rules specify that fights are to the death, the possibility of retreat will be ignored.
 

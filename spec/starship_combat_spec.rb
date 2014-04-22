@@ -113,7 +113,7 @@ describe StarshipCombat do
     let(:f2) { Lenat.new(c2) }
     let(:sc) { StarshipCombat.new(f1, f2) }
   
-    it 'shoud be a winner after 100 rounds' do
+    it 'shoud have a winner after 100 rounds' do
       srand 0
       sc.run(100)
       expect(f1.can_fire? ^ f2.can_fire?).to be_true
