@@ -312,7 +312,7 @@ class Ship
     
     new_ship.hits = {}
     hits.each do |key, value|
-      new_ship.hits[key] = value.dup
+      new_ship.hits[key] = (value.class == Array ? value.dup : value)
     end
     
     new_ship.batteries = {}
