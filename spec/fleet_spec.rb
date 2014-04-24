@@ -12,5 +12,12 @@ describe Fleet do
     it 'should require no more than 200 pilots' do
       expect(lenat.pilots).to be <= 200
     end
+    it 'should be capable of jump 3' do
+      expect(lenat.tcs_valid_jump?).to be_true
+    end
+    it 'should not be capable of jump 3 after adding another Bee' do
+      lenat.ship_counts[-1] += 1
+      expect(lenat.tcs_valid_jump?).to be_false
+    end
   end
 end

@@ -801,7 +801,7 @@ end
 
 class Eurisko < Ship
   def initialize
-    super("Ba-K952563-J41100-34003-0", "1     11  V", 5_550, 555, 11_100)
+    super("BA-K952563-J41100-34003-0", "1     11  V", 5_550, 555, 11_100)
   end
 end
 

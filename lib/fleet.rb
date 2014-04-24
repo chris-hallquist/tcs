@@ -109,12 +109,27 @@ class Fleet
     ships.size
   end
   
-  def TCS_valid?
-    return false unless ships.all? do |ship| 
-      ship.valid? && ship.jump_with_tanks > 2 && 
-        ship.maneuver_with_tanks > 0 
+  def tcs_valid?
+    return false unless ship_classes.all? do |ship| 
+      ship.valid? && ship.maneuver_with_tanks > 0 
     end 
-    pilots <= 200 && cost <= 1_000_000_000_000
+    pilots <= 200 && cost <= 1_000_000_000_000 && tcs_valid_jump?
+  end
+  
+  def tcs_valid_jump?
+    carried_craft = {}
+    ship_classes.each_with_index do |ship_class, i|
+      vehicles = ship_class.options[:vehicles] || []
+      vehicles.each do |vehicle|
+        carried_craft[vehicle.class] ||= 0
+        carried_craft[vehicle.class] += ship_counts[i]
+      end
+    end
+    ship_classes.each_index.all? do |i|
+      ship_class = ship_classes[i]
+      ship_class.jump_with_tanks > 2 || (carried_craft[ship_class.class] &&
+       carried_craft[ship_class.class] >= ship_counts[i])
+    end
   end
 end
 
