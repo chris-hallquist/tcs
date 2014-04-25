@@ -834,3 +834,9 @@ class Queller < Ship
     super("BH-K1526F3-B41106-34Q02-1", "Z   1 NN1 N", 9_800, 1_176, 19_600, { frozen_watch: true, vehicles: [Bee.new, Wasp.new] })
   end
 end
+
+class Hornet < Ship
+  def initialize
+    super("Il-A90ZZF2-A00000-00009-0", "          1", 0, 60, 1_000)
+  end
+end
