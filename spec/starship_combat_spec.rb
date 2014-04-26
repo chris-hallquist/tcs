@@ -71,10 +71,10 @@ describe StarshipCombat do
       end
     end
     
-    it 'shoud be a stalemate after 100 rounds' do
+    it 'both ships should still be able to fire after 100 rounds' do
       srand 0
       sc.run(100)
-      expect(f1.can_fire? ^ f2.can_fire?).to be_false
+      expect(f1.can_fire? && f2.can_fire?).to be_true
     end
   end
   
@@ -85,10 +85,10 @@ describe StarshipCombat do
     let(:f2) { OneQueller.new(c2) }
     let(:sc) { StarshipCombat.new(f1, f2) }
   
-    it 'shoud be a stalemate after 100 rounds' do
+    it 'both ships should still be able to fire after 100 rounds' do
       srand 0
       sc.run(100)
-      expect(f1.can_fire? ^ f2.can_fire?).to be_false
+      expect(f1.can_fire? && f2.can_fire?).to be_true
     end
   end
   
@@ -99,10 +99,10 @@ describe StarshipCombat do
     let(:f2) { OneCisor.new(c2) }
     let(:sc) { StarshipCombat.new(f1, f2) }
   
-    it 'shoud be a stalemate after 100 rounds' do
+    it 'neither ship should be able to fire after 1 round' do
       srand 0
-      sc.run(100)
-      expect(f1.can_fire? ^ f2.can_fire?).to be_false
+      sc.run(1)
+      expect(f1.can_fire? || f2.can_fire?).to be_false
     end
   end
   

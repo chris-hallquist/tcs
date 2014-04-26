@@ -837,6 +837,6 @@ end
 
 class Hornet < Ship
   def initialize
-    super("Il-A90ZZF2-A00000-00009-0", "          1", 0, 60, 1_000)
+    super("Il-A9066F2-900000-00009-0", "          1", 0, 60, 1_000)
   end
 end

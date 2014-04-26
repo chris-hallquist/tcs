@@ -18,8 +18,8 @@ class Battery
     raise "Not implemented"
   end
   
-  def dms_to_penetrate
-    comp + (self.class == EnergyWeapon ? 2 : 0)
+  def dms_to_penetrate(target)
+    comp - target.comp_model + (self.class == EnergyWeapon ? 2 : 0)
   end
   
   def energy
@@ -56,7 +56,7 @@ class Battery
   end
 
   def standard_dms_to_hit(target)
-    total = comp 
+    total = comp - target.comp_model
     total -= target.agility_with_tanks
     total += size_modifiers(target)
   end
@@ -80,7 +80,7 @@ class BeamWeapon < Battery
     active_ds.none? do |d|
       d.fired_count += 1
       d.class == SandCaster && d.factor > 0 && d.fired_count <= d.count &&
-        TCS.roll + dms_to_penetrate >= to_penetrate(d) 
+        TCS.roll + dms_to_penetrate(target) >= to_penetrate(d) 
     end
   end
   
@@ -229,16 +229,16 @@ class MesonGun < Battery
   end
 
   def penetrate_config?(target)
-    TCS.roll + dms_to_penetrate >= to_penetrate_config(target)
+    TCS.roll + dms_to_penetrate(target) >= to_penetrate_config(target)
   end
   
   def penetrate_screen?(target)
     if target.meson_screen == 0
       return true
     elsif factor < 10
-      TCS.roll + dms_to_penetrate >= 16 - factor / 2
+      TCS.roll + dms_to_penetrate(target) >= 16 - factor / 2
     else
-      TCS.roll + dms_to_penetrate >= 9 - (factor - 10) / 2
+      TCS.roll + dms_to_penetrate(target) >= 9 - (factor - 10) / 2
     end
   end
   
@@ -362,9 +362,9 @@ class Missile < Battery
       if d.fired_count > d.count
         false
       elsif (d.class == SandCaster || d.class <= BeamWeapon) && d.factor > 0
-        TCS.roll + dms_to_penetrate >= to_penetrate_sob(d)
+        TCS.roll + dms_to_penetrate(target) >= to_penetrate_sob(d)
       elsif d.class == Repulsor && d.factor > 0
-        TCS.roll + dms_to_penetrate >= to_penetrate_repulsor(d)
+        TCS.roll + dms_to_penetrate(target) >= to_penetrate_repulsor(d)
       else
         true
       end
@@ -375,7 +375,7 @@ class Missile < Battery
     if target.nuc_damp == 0 || type != :nuc
       return true
     else
-      TCS.roll + dms_to_penetrate >= 11 - factor
+      TCS.roll + dms_to_penetrate(target) >= 11 - factor
     end
   end
   
