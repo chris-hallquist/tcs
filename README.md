@@ -9,7 +9,7 @@ At the moment, I'm *mostly* done writing the game code, and expect to begin writ
 3. Implement the requirement that fleets be capable of gas giant refueling
 4. Implement different options for energy weapons
 
-# Rules Sources and Notes
+## Rules Sources and Notes
 
 The Trillion Credit Squadron scenario had special rules for calculating fleet costs. Among other things, the rules specify that players must pay:
 
@@ -43,7 +43,23 @@ Finally, I plan to write the code in a way that assumes the rules of the origina
 
 Most other important rules were found in Book 5: High Guard. 
 
-# Ship Stats Summary
+# AI Design
+
+Two AIs need to be written: an AI to design fleets, and an AI to play the actual game. The hard part of TCS seems to be fleet design, but the fleet design AI needs the player AI to run simulated battles, and flaws in the second AI may lead to fleets being tailored to its flaws, rather than an optimal fleet.
+
+## Game AI
+
+While decisions made playing the game may not be as complicated as fleet design decisions, it's still not entirely clear what the optimal strategy is. However, it seems likely that the best strategy would divide fire evenly among those ships still able to fight. 
+
+All shots against a given ship must be declared before any are resolved, so concentrating fire on one ship risks wasting shots. Also, many damage effects either directly reduce a ship's effectiveness, or take it out of the fight entirely in a single shot. This is in contrast to other game systems, where units retain full combat effectiveness until they reach 0 hit points (a rule that greatly rewards concentrating fire). 
+
+It is unclear how useful making repairs mid-combat is, so this will be reserved for ships not able to fight.
+
+# Notes On Rules and Implementation Decisions
+
+These notes are in large part for my own benefit, but in some cases document important decisions about how to interpret the game rules.
+
+## Ship Stats Summary
 
 The following stats are encoded in a ship's USP Code:
 
@@ -83,7 +99,7 @@ Other stats:
 
 Most of these values may be set freely. Agility, battery bearing, cost, crew code, and tonnage code are calculated from other statistics. Effective drive and power plant ratings when using drop tanks also need to be calculated. Many other stats are to some degree constrained by other stats, but can't be directly calculated from them. 
 
-# Drop Tanks
+## Drop Tanks
 
 The rule quoted above stating that "the squadron must be capable of jump-3" refers to its capability for faster-than-light travel. This is an important rule, because in the rules of Traveller, faster-than-light travel requires a significant amount of fuel, equal to 10% of the ship's mass per jump number.
 
@@ -93,19 +109,19 @@ Drop tanks would have been a significantly cheaper way to meet the fuel requirem
 
 The advantages of using drop tanks are substantial enough on their own that I will assume they cannot be voluntarily jettisoned during combat, and that their mass still counts towards total ship mass after being destroyed in combat.
 
-# Crew Requirements
+## Crew Requirements
 
 Crew requirement rules seem rather needlessly complicated, given how little role the crew serves in the TCS scenario. Therefore, largely for my own benefit, I've tried to summarize the relevant rules below. Question marks indicate issues where the rules appear unclear to me.
 
-## Small Craft
+### Small Craft
 
 Small (military) craft are assumed to have a crew size of two: one pilot and one gunner.
 
-## Non-Small Craft <= 1000 Tons
+### Non-Small Craft <= 1000 Tons
 
 These ships must have a pilot and one gunner per turret (battery?). Ships of 200 tons or more must have a navigator and a medic, as well as one engineer per 35 tons of power plant.
 
-## Craft > 1000 Tons
+### Craft > 1000 Tons
 
 These ships will have at least three section heads requiring staterooms. If the ship has any launched craft, there will be a section head for the flight section. If the ship carries troops, the commander of the ship's troops counts as a section head for purposes of necessary crew quarters.
 
@@ -113,19 +129,7 @@ In terms of total crew, all ships over 1000 tons have will have a command sectio
 
 Engineering section will have one crewmember per 100 tons of drives. Gunnery section will have one crew per 100 tons of major weapon, two per bay weapon, one per turret battery, and four per screen. If the ship has launched craft, this requires one crewmember plus one per craft plus crew for craft.
 
-# AI Design
-
-Two AIs need to be written: an AI to design fleets, and an AI to play the actual game. The hard part of TCS seems to be fleet design, but the fleet design AI needs the player AI to run simulated battles, and flaws in the second AI may lead to fleets being tailored to its flaws, rather than an optimal fleet.
-
-## Game AI
-
-While decisions made playing the game may not be as complicated as fleet design decisions, it's still not entirely clear what the optimal strategy is. However, it seems likely that the best strategy would divide fire evenly among those ships still able to fight. 
-
-All shots against a given ship must be declared before any are resolved, so concentrating fire on one ship risks wasting shots. Also, many damage effects either directly reduce a ship's effectiveness, or take it out of the fight entirely in a single shot. This is in contrast to other game systems, where units retain full combat effectiveness until they reach 0 hit points (a rule that greatly rewards concentrating fire). 
-
-It is unclear how useful making repairs mid-combat is, so this will be reserved for ships not able to fight.
-
-# Ignored Rules
+## Ignored Rules
 
 The rules for boarding and ship's troops seem highly unlikely to matter in the TCS scenario, and therefore will probably never be implemented:
 
@@ -133,7 +137,7 @@ The rule that sufficiently similar, but distinct, ship designs get a discount wi
 
 Because TCS rules specify that fights are to the death, the possibility of retreat will be ignored.
 
-# Tech Levels
+## Tech Levels
 
 Because the original TCS tournament set the tech level at 12, I've focused on implementing rules for that tech level. Some systems are unavailable at that tech level, while others may be obsolete. So be warned: implementation of rules for unavailable or obsolete systems may be spotty. 
 
@@ -151,6 +155,10 @@ System factors that are available, but not obsolete, at TL12:
 10. Jump Drives: 1-3
 11. Computers: 1-6
 
-# Missiles
+## Missiles
 
 It's unclear at what point in the ship design process players are supposed to choose whether to use high explosive or nuclear missiles. I've decided to make nuclear missiles the default, much as beam lasers are the default.
+
+## "Relative Computer Size"
+
+In Traveller, "relative computer size" modifies attack roles. However, it is somewhat unclear what this means. A natural interpretation would be that this represents the *difference* in computer size between the two ships involved. However, the *High Guard* rules say on p. 28 that, "Model number is the relative size of the computer, and corresponds to the computer model numbers given in Book 2. Model/1 is the standard computer model..." So perhaps "relative computer size" means relative to this "standard model." This ambiguity in the rules is important, because the first interpretation makes ships with good computers substantially harder to hit. I've decided to go with this first interpretation, because it seems to be the one assumed in various blog and forum posts I've read about the game, and because it makes it possible to make sense of Lenat's claim (quoted in the article lined at the beginning of this readme) that Eurisko had produced some almost unhittable ship designs.
