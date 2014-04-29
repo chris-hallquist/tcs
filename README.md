@@ -5,9 +5,9 @@ This is a machine learning / genetic algorithms project I originally proposed [h
 At the moment, I'm *mostly* done writing the game code, and expect to begin writing the machine learning part soon. Current TODOs:
 
 1. Finish writing code for human players (may put this off, as its not the focus of the project)
-2. Fix issues with and finish implementing carried craft
-3. Implement the requirement that fleets be capable of gas giant refueling
-4. Implement different options for energy weapons
+2. Implement the requirement that fleets be capable of gas giant refueling
+3. Implement different options for energy weapons
+4. Implement battery bearing
 
 ## Rules Sources and Notes
 
@@ -161,4 +161,10 @@ It's unclear at what point in the ship design process players are supposed to ch
 
 ## "Relative Computer Size"
 
-In Traveller, "relative computer size" modifies attack roles. However, it is somewhat unclear what this means. A natural interpretation would be that this represents the *difference* in computer size between the two ships involved. However, the *High Guard* rules say on p. 28 that, "Model number is the relative size of the computer, and corresponds to the computer model numbers given in Book 2. Model/1 is the standard computer model..." So perhaps "relative computer size" means relative to this "standard model." This ambiguity in the rules is important, because the first interpretation makes ships with good computers substantially harder to hit. I've decided to go with this first interpretation, because it seems to be the one assumed in various blog and forum posts I've read about the game, and because it makes it possible to make sense of Lenat's claim (quoted in the article lined at the beginning of this readme) that Eurisko had produced some almost unhittable ship designs.
+In Traveller, "relative computer size" modifies attack roles. However, it is somewhat unclear what this means. A natural interpretation would be that this represents the *difference* in computer size between the two ships involved. However, the *High Guard* rules say on p. 28 that, "Model number is the relative size of the computer, and corresponds to the computer model numbers given in Book 2. Model/1 is the standard computer model..." So perhaps "relative computer size" means relative to this "standard model." 
+
+This ambiguity in the rules is important, because the first interpretation makes ships with good computers substantially harder to hit. I've decided to go with this first interpretation, because it seems to be the one assumed in various blog and forum posts I've read about the game, and because it makes it possible to make sense of Lenat's claim (quoted in the article lined at the beginning of this readme) that Eurisko had produced some almost unhittable ship designs.
+
+## Gas Giant Refueling
+
+Requirements for a ship's being able to refuel from gas giants can be found on *High Guard* p. 27 and *Trillion Credit Squadron* p. 39. Fuel scoop cost is negligible and will be ignored. Lenat's fleet design suggests that the rule requiring 10% of fuel tankage to be in streamlined or partially streamlined ships was in force in the TCS tournament. It is unclear whether rules for fuel refineries were used in the tournament, but tentatively they will be ignored.
