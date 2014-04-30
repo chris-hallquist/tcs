@@ -109,11 +109,22 @@ class Fleet
     ships.size
   end
   
+  def tcs_can_refuel?
+    total_fuel = 0
+    total_streamlined_fuel = 0
+    ships.each do |ship|
+      total_fuel += ship.total_fuel
+      total_streamlined_fuel += ship.total_fuel if ship.streamlined?
+    end
+    total_streamlined_fuel.to_f / total_fuel >= 0.1
+  end
+  
   def tcs_valid?
     return false unless ship_classes.all? do |ship| 
       ship.valid? && ship.maneuver_with_tanks > 0 
     end 
-    pilots <= 200 && cost <= 1_000_000_000_000 && tcs_valid_jump?
+    pilots <= 200 && cost <= 1_000_000_000_000 && tcs_valid_jump? &&
+      tcs_can_refuel?
   end
   
   def tcs_valid_jump?

@@ -642,6 +642,10 @@ class Ship
     nil
   end
   
+  def streamlined?
+    (8..9).include?(config)
+  end
+  
   def sync_battery_comps
     batteries.each_value do |battery|
       battery.comp = effective_comp
@@ -712,6 +716,10 @@ class Ship
     @tons + @drop_tanks
   end
   
+  def total_fuel
+    @fuel + @drop_tanks
+  end
+  
   def valid?
     valid_active_def? && valid_bridge? && valid_comp? && valid_energy? &&
       valid_fuel? && valid_major_weapon? && valid_screens? && valid_tons? &&
@@ -739,7 +747,6 @@ class Ship
   end
   
   def valid_jump_fuel?
-    total_fuel = @fuel + @drop_tanks
     needed_fuel_percent = jump_with_tanks / 10.0 + power_with_tanks / 100.0
     total_fuel >= needed_fuel_percent * tons_with_tanks
   end
