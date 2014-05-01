@@ -6,7 +6,6 @@ At the moment, I'm *mostly* done writing the game code, and expect to begin writ
 
 1. Finish writing code for human players (may put this off, as its not the focus of the project)
 2. Implement different options for energy weapons
-3. Implement battery bearing
 
 ## Rules Sources and Notes
 
