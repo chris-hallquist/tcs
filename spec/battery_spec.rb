@@ -9,16 +9,19 @@ describe Battery do
   let(:g) { MesonGun.new(12, 1, 6, 1) }
   let(:c) { ComputerPlayer.new }
   context 'when the battery is a Missile' do
-    it 'should always hit Eurisko-class ships' do
+    it 'should sometimes hit Eurisko-class ships' do
       srand 0
-      expect((0..71).all? { m.hit?(e, :long) }).to be_true
+      expect(m.hit?(e, :long)).to be_true
     end
-    it 'should usually hit Wasp-class ships' do
+    it 'should sometimes miss Eurisko-class ships' do
+      expect(m.hit?(e, :long)).to be_false
+    end
+    it 'should sometimes hit Wasp-class ships' do
       srand 0
-      expect((0..7).all? { m.hit?(w, :long) }).to be_true
+      expect(m.hit?(w, :long)).to be_true
     end
-    it 'should sometimes miss Wasp-class ships' do
-      expect(m.hit?(w, :long)).to be_false
+    it 'should almost always miss Wasp-class ships' do
+      expect((0..24).none? { m.hit?(w, :long) }).to be_true
     end
     it 'usually shouldn\'t damage Eurisko-class ships' do
       srand 0

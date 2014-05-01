@@ -20,19 +20,6 @@ describe StarshipCombat do
       it 'records hits' do
         expect(f1.ships[0].shadow.hits.length > 0).to be_true
       end
-      it 'loses 7 missile batteries' do
-        expect(f1.ships[0].shadow.batteries[:missile].count).to be 22
-      end
-      it 'takes enough damage to be unable to fire' do
-        expect(f1.ships[0].shadow.can_fire?).to be_false
-      end
-      it 'should be permanently disabled' do
-        expect(f1.ships[0].shadow.hits[:perm_disabled]).to be_true
-      end
-      it 'should be removed from fleet after applying dammage' do
-        f1.apply_damage
-        expect(f1.ships.length).to be 0
-      end
     end
   end
   
@@ -56,53 +43,10 @@ describe StarshipCombat do
       end
     end
     
-    context 'a ship that is exposed to fire multiple times' do
-      srand 0
-      before(:each) do
-        2.times do
-          sc.form_lines
-          c2.begin_combat_step
-          f2.reset_fired_counts
-          f1.ships[0].expose_to_fire(f2, :long)
-        end
-      end
-      it 'takes damage' do
-        expect(f1.ships[0].shadow.hits.length > 0).to be_true
-      end
-    end
-    
     it 'both ships should still be able to fire after 100 rounds' do
       srand 0
       sc.run(100)
       expect(f1.can_fire? && f2.can_fire?).to be_true
-    end
-  end
-  
-  context 'when two Queller-class ships fight' do
-    let(:c1) { ComputerPlayer.new }
-    let(:c2) { ComputerPlayer.new }
-    let(:f1) { OneQueller.new(c1) }
-    let(:f2) { OneQueller.new(c2) }
-    let(:sc) { StarshipCombat.new(f1, f2) }
-  
-    it 'both ships should still be able to fire after 100 rounds' do
-      srand 0
-      sc.run(100)
-      expect(f1.can_fire? && f2.can_fire?).to be_true
-    end
-  end
-  
-  context 'when two Cisor-class ships fight' do
-    let(:c1) { ComputerPlayer.new }
-    let(:c2) { ComputerPlayer.new }
-    let(:f1) { OneCisor.new(c1) }
-    let(:f2) { OneCisor.new(c2) }
-    let(:sc) { StarshipCombat.new(f1, f2) }
-  
-    it 'neither ship should be able to fire after 1 round' do
-      srand 0
-      sc.run(1)
-      expect(f1.can_fire? || f2.can_fire?).to be_false
     end
   end
   
