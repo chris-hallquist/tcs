@@ -107,8 +107,15 @@ class BeamWeapon < Battery
 end
 
 class EnergyWeapon < BeamWeapon
-  # Will assume fusion guns not in bays, for now at least
+  attr_accessor :type
+  
+  def initialize(factor, count, comp, ship_size, type=:fusion)
+    super(factor, count, comp, ship_size)
+    @type=type
+  end
+  
   def cost
+    return 
     factor * turrets * 1_000_000
   end
   

@@ -166,3 +166,27 @@ This ambiguity in the rules is important, because the first interpretation makes
 ## Gas Giant Refueling
 
 Requirements for a ship's being able to refuel from gas giants can be found on *High Guard* p. 27 and *Trillion Credit Squadron* p. 39. Fuel scoop cost is negligible and will be ignored. Lenat's fleet design suggests that the rule requiring 10% of fuel tankage to be in streamlined or partially streamlined ships was in force in the TCS tournament. It is unclear whether rules for fuel refineries were used in the tournament, but tentatively they will be ignored.
+
+## Energy Weapons
+
+The situation with energy weapons is a little weird, because like missiles and lasers, they come in two flavors, in this case plasma guns and fusion guns. Unlike those other cases, though, the difference is not in the weapons' damage roll, but solely in their weight, energy requirements, and cost. Furthermore, there is some overlap between the factors of the bay and turret versions of those weapons.
+
+A factor 4 energy weapon battery can be attained two ways: plasma gun turrets, or fusion gun turrets. In the first case, weight per battery is 8 tons, energy per battery is 4 EP, and cost per battery is 6 MCr. In the second case, weight per battery is 2 tons, energy per battery is 2 EP, and cost per battery is 2 EP. Hence, fusion guns are superior in every way.
+
+A similar situation exists with factor 5 energy weapon batteries. The numbers are 20 tons vs 8 tons, 10 EP vs 8 EP, and 15 MCR vs. 8 MCr. Again, fusion guns are superior in every way.
+
+At factor 6, there are three possibilities: turrets of either type, or bay plasma guns. Here are the numbers:
+
+                   Weight   Energy  Cost  
+Plasma gun turret: 32 tons  16 EP   24 MCr
+Fusion gun turret: 20 tons  20 EP   20 MCr
+Bay plasma gun:    50 tons  10 EP   5 MCr
+
+At factor 7, there are again three possibilities: turrets of either type, or bay fusion guns. Here are the numbers:
+
+                   Weight   Energy  Cost  
+Plasma gun turret: 40 tons  20 EP   30 MCr
+Fusion gun turret: 32 tons  32 EP   32 MCr
+Bay fusion gun:    50 tons  20 EP   8 MCr
+
+In neither case does one option completely dominate any of the others, making it necessary to make all three options available to ship designers.
