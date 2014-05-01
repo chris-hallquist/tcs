@@ -5,8 +5,8 @@ require 'computer_player'
 describe Battery do
   let(:e) { Eurisko.new }
   let(:w) { Wasp.new }
-  let(:m) { Missile.new(3, 1, 6) }
-  let(:g) { MesonGun.new(12, 1, 6) }
+  let(:m) { Missile.new(3, 1, 6, 1) }
+  let(:g) { MesonGun.new(12, 1, 6, 1) }
   let(:c) { ComputerPlayer.new }
   context 'when the battery is a Missile' do
     it 'should always hit Eurisko-class ships' do

@@ -109,12 +109,12 @@ class Ship
   def batteries!
     @batteries = {}
     if energy_weapon > 0 && energy_weapon_count > 0
-      args = [energy_weapon, energy_weapon_count, effective_comp]
+      args = [energy_weapon, energy_weapon_count, effective_comp, tonnage_code]
       args << options[:energy_weapon_type] if options[:energy_weapon_type]
       @batteries[:energy_weapon] = EnergyWeapon.new(*args)
     end
     if laser > 0 && laser_count > 0
-      args = [laser, laser_count, effective_comp]
+      args = [laser, laser_count, effective_comp, tonnage_code]
       args << options[:laser_type] if options[:laser_type]
       @batteries[:laser] = Laser.new(*args)
     end
@@ -122,11 +122,12 @@ class Ship
       @batteries[:meson_gun] = MesonGun.new(
         meson_gun, 
         meson_gun_count, 
-        effective_comp
+        effective_comp,
+        tonnage_code
       )
     end
     if missile > 0 && missile_count > 0
-      args = [missile, missile_count, effective_comp]
+      args = [missile, missile_count, effective_comp, tonnage_code]
       args << options[:missile_type] if options[:missile_type]
       @batteries[:missile] = Missile.new(*args)
     end
@@ -134,18 +135,25 @@ class Ship
       @batteries[:particle_acc] = ParticleAccelerator.new(
         particle_acc, 
         particle_acc_count,
-        effective_comp
+        effective_comp,
+        tonnage_code
       )
     end
     if repulsor > 0 && repulsor_count > 0
       @batteries[:repulsor] = Repulsor.new(
         repulsor, 
         repulsor_count, 
-        effective_comp
+        effective_comp,
+        tonnage_code
       )
     end
     if sand > 0 && sand_count > 0
-      @batteries[:sand] = SandCaster.new(sand, sand_count, effective_comp)
+      @batteries[:sand] = SandCaster.new(
+        sand, 
+        sand_count, 
+        effective_comp, 
+        tonnage_code
+      )
     end
     @batteries
   end

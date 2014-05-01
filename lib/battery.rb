@@ -3,15 +3,32 @@ require './lib/ship'
 require './lib/TCS'
 
 class Battery
-  attr_accessor :factor, :count, :fired_count, :comp
+  attr_accessor :factor, :comp, :fired_count
+  attr_writer :count
   
-  def initialize(factor, count, comp)
+  def initialize(factor, tot_count, comp, ship_size)
     @factor = factor
-    @count = count
+    @count = tot_count
     @comp = comp
     @fired_count = 0
+    @bearing = bearing!(ship_size)
     spinal?
     uniq?
+  end
+  
+  def bearing!(ship_size)
+    if ship_size <= 19
+      percent = 1
+    elsif ship_size <= 29
+      percent = 1 - 0.05 * (ship_size - 19)
+    else
+      percent = 0.5
+    end
+    (@count * percent).round
+  end
+  
+  def count
+    [@count, @bearing].min
   end
   
   def defenses_penetrated?(target, active_ds)
@@ -124,8 +141,8 @@ end
 class Laser < BeamWeapon
   attr_accessor :type
   
-  def initialize(factor, count, comp, type=:beam)
-    super(factor, count, comp)
+  def initialize(factor, count, comp, ship_size, type=:beam)
+    super(factor, count, comp, ship_size)
     @type=type
   end
   
@@ -336,8 +353,8 @@ end
 class Missile < Battery
   attr_accessor :type
   
-  def initialize(factor, count, comp, type=:nuc)
-    super(factor, count, comp)
+  def initialize(factor, count, comp, ship_size, type=:nuc)
+    super(factor, count, comp, ship_size)
     @type=type
   end
   
