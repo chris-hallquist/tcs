@@ -83,7 +83,7 @@ class Battery
   end
   
   def uniq?
-    @uniq = count == 1 if @uniq == nil
+    @uniq = @count == 1 if @uniq == nil
     @uniq
   end
 end
@@ -115,12 +115,15 @@ class EnergyWeapon < BeamWeapon
   end
   
   def cost
-    return 
-    factor * turrets * 1_000_000
+    return 5_000_000 * @count if type == :bay && factor == 6
+    return 8_000_000 * @count if type == :bay && factor == 7
+    turrets * 1_000_000 * @count
   end
   
   def energy
-    factor * turrets * 2
+    return 10 * @count if type == :bay && factor == 6
+    return 20 * @count if type == :bay && factor == 7
+    turrets * 2 * @count
   end
 
   def range_dm(range)
@@ -133,15 +136,17 @@ class EnergyWeapon < BeamWeapon
   end
 
   def tons
-    factor * turrets * 2
+    return 50 * @count if type == :bay
+    turrets * 2 * @count
   end
   
   def turrets
-    @turrets ||= Hash.new(0).merge({ 4 => 1, 
+    h = Hash.new(0).merge({ 4 => 1, 
                                      5 => 4, 
                                      6 => 10, 
                                      7 => 11, 
-                                     8 => 20 })[factor]
+                                     8 => 20 })
+    @turrets ||= h[type == :plasma ? factor + 1 : factor]
   end
 end
 
@@ -154,11 +159,11 @@ class Laser < BeamWeapon
   end
   
   def cost
-    count * (type == :pulse ? turrets * 0.5 : turrets) * 1_000_000
+    @count * (type == :pulse ? turrets * 0.5 : turrets) * 1_000_000
   end
   
   def energy
-    count * turrets
+    @count * turrets
   end
   
   def range_dm(range)
@@ -172,7 +177,7 @@ class Laser < BeamWeapon
   end
   
   def tons
-    count * turrets
+    @count * turrets
   end
   
   def turrets
@@ -371,11 +376,11 @@ class Missile < Battery
   
   def cost
     if factor == 9
-      return count * 20_000_000
+      return @count * 20_000_000
     elsif factor == 8
-      return count * 12_000_000
+      return @count * 12_000_000
     else
-      return count * turrets * 750_000
+      return @count * turrets * 750_000
     end
   end
   
@@ -424,11 +429,11 @@ class Missile < Battery
   
   def tons
     if factor == 9
-      return count * 100
+      return @count * 100
     elsif factor == 8
-      return count * 50
+      return @count * 50
     else
-      return count * turrets
+      return @count * turrets
     end
   end
 
@@ -461,9 +466,9 @@ class ParticleAccelerator < Battery
   
   def cost
     if factor <= 4
-      return count * 20_000_000
+      return @count * 20_000_000
     elsif factor <= 8
-      return count * 35_000_000
+      return @count * 35_000_000
     else
       return [3_500,
                3_000,
@@ -493,9 +498,9 @@ class ParticleAccelerator < Battery
   
   def energy
     if factor <= 4
-      return count * 30
+      return @count * 30
     elsif factor <= 9
-      return count * 60
+      return @count * 60
     else
       return (((factor - 10) / 3) + 5) * 100
     end
@@ -522,9 +527,9 @@ class ParticleAccelerator < Battery
 
   def tons
     if factor == 4
-      return count * 50
+      return @count * 50
     elsif factor == 8
-      return count * 100
+      return @count * 100
     elsif factor > 9
       return [5_500,
               5_000,
