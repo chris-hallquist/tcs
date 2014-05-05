@@ -123,7 +123,7 @@ class EnergyWeapon < BeamWeapon
   def energy
     return 10 * @count if type == :bay && factor == 6
     return 20 * @count if type == :bay && factor == 7
-    turrets * 2 * @count
+    turrets * (type == :plasma ? 1 : 2) * @count
   end
 
   def range_dm(range)
