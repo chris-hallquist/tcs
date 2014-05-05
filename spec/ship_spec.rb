@@ -30,6 +30,9 @@ describe Ship do
     it 'should have 29 missile batteries' do
       expect(eurisko.missile_count).to be 29
     end
+    it 'should not be streamlined' do
+      expect(eurisko.streamlined?).to be_false
+    end
   end
   context 'when ship is Cisor class' do
     it 'should have mass within 3% of the official value' do
@@ -45,6 +48,9 @@ describe Ship do
     end
     it 'should have cost within 3% of the official value' do
       expect((garter.cost / 17_584_104_000 - 1).abs).to be < 0.03
+    end
+    it 'should be streamlined' do
+      expect(garter.streamlined?).to be_true
     end
   end
   context 'when ship is Queller class' do

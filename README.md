@@ -2,9 +2,7 @@
 
 This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller. Historical background [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own). The stats for Lenat's winning fleet can be found [here](http://members.pcug.org.au/~davidjw/tavspecs/best_tml/Starships%20(HG)%20-%20Professor%20Lenat%20and%20EURISKO's%20Winning%20Fleet.htm).
 
-At the moment, I'm *mostly* done writing the game code, and expect to begin writing the machine learning part soon. Current TODOs:
-
-1. Finish writing code for human players (may put this off, as its not the focus of the project)
+At the moment, I'm essentially done writing the game code, and now beginning to write the machine learning part. Note that one thing which may never be finished is writing the code to support human players, as that's the focus of the project.
 
 ## Rules Sources and Notes
 
@@ -49,6 +47,8 @@ Two AIs need to be written: an AI to design fleets, and an AI to play the actual
 While decisions made playing the game may not be as complicated as fleet design decisions, it's still not entirely clear what the optimal strategy is. However, it seems likely that the best strategy would divide fire evenly among those ships still able to fight. 
 
 All shots against a given ship must be declared before any are resolved, so concentrating fire on one ship risks wasting shots. Also, many damage effects either directly reduce a ship's effectiveness, or take it out of the fight entirely in a single shot. This is in contrast to other game systems, where units retain full combat effectiveness until they reach 0 hit points (a rule that greatly rewards concentrating fire). 
+
+However, there may be exceptions to this principle. In particular, it may be worth concentrating fire on exceptionally dangerous ships, such as ones armed with meson guns. I may add this tactic to the AI at some point.
 
 It is unclear how useful making repairs mid-combat is, so this will be reserved for ships not able to fight.
 
