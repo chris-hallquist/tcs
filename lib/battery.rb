@@ -117,7 +117,7 @@ class EnergyWeapon < BeamWeapon
   def cost
     return 5_000_000 * @count if type == :bay && factor == 6
     return 8_000_000 * @count if type == :bay && factor == 7
-    turrets * 1_000_000 * @count
+    turrets * (type == :plasma ? 1.5 : 2) * 1_000_000 * @count
   end
   
   def energy
