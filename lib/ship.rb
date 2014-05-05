@@ -651,7 +651,7 @@ class Ship
   end
   
   def streamlined?
-    (8..9).include?(config)
+    (1..6).include?(config)
   end
   
   def sync_battery_comps

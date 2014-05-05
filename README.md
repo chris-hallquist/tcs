@@ -5,7 +5,6 @@ This is a machine learning / genetic algorithms project I originally proposed [h
 At the moment, I'm *mostly* done writing the game code, and expect to begin writing the machine learning part soon. Current TODOs:
 
 1. Finish writing code for human players (may put this off, as its not the focus of the project)
-2. Implement different options for energy weapons
 
 ## Rules Sources and Notes
 
