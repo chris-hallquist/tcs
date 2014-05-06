@@ -4,6 +4,8 @@ This is a machine learning / genetic algorithms project I originally proposed [h
 
 At the moment, I'm essentially done writing the game code, and now beginning to write the machine learning part. Note that one thing which may never be finished is writing the code to support human players, as that's the focus of the project.
 
+I've begun a separate file for working out plans for the AI [here](AI-notes.md).
+
 ## Rules Sources and Notes
 
 The Trillion Credit Squadron scenario had special rules for calculating fleet costs. Among other things, the rules specify that players must pay:
