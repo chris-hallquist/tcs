@@ -336,7 +336,13 @@ class Ship
   end
   
   def effective_comp
-    hits[:bridge_destroyed] ? comp_model / 2 : comp_model
+    if options[:no_bridge]
+      return comp_model - 1
+    elsif hits[:bridge_destroyed] 
+      return comp_model / 2 
+    else
+      return comp_model
+    end
   end
   
   def energy
