@@ -1,18 +1,23 @@
 Going to try having all values in ship genomes normalized from 0 to 1.
 
-Here's how it works:
+For weapons/batteries, count is always 0 if the factor is, 1 if the factor is A or above, and can range from 1 to 33 otherwise. This last case requires the 0 to 1 range partitioned into 33 segments.
 
-Particle Accelerator:
-* Six possibilities, so proceeds in sixths.
-* Count is automatically 0 if the factor is.
-* Count is automatically 1 if the factor is A or above.
-* 
+* Particle Accelerator: six possible factors (0, 4, 8, E, L, Q), so proceeds in sixths
+* Meson Gun: four possibilities (0, C, D, K) so proceeds in fourths.
+* Missile: nine possible factors (0-6, 8-9). Additional binary choice of nuclear or conventional missiles.
+* Laser: ???
+* Energy Weapon: ???
+* Sand-Caster: eight possibilities (0, 3-9)
+* Repulsor: binary choice (0, 6)
 
-Meson Gun:
-* 0-0.25: factor 0
-* 0.25-0.5:  
+Non-weapons tech:
 
-System factors that are available, but not obsolete, at TL12:
+* Nuclear Damper: binary choice (0, 1); count limited to 1
+* Meson Screen: as Nuclear Damper
+* Jump Drive: should really be a binary choice of 0 or 3
+* Computers: 1-6, can't be 0 on fighting ships
+
+Tech options:
 
 1. Particle Accelerator: 4, 8, E, L, Q
 2. Meson Gun: C, D, K
