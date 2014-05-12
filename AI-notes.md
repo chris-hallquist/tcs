@@ -5,8 +5,8 @@ For weapons/batteries, count is always 0 if the factor is, 1 if the factor is A 
 * Particle Accelerator: six possible factors (0, 4, 8, E, L, Q), so proceeds in sixths
 * Meson Gun: four possibilities (0, C, D, K) so proceeds in fourths.
 * Missile: nine possible factors (0-6, 8-9). Additional binary choice of nuclear or conventional missiles.
-* Laser: ???
-* Energy Weapon: ???
+* Laser: A binary choice of type determines the range of options: nine options (0-8) for beam lasers and seven options (0-6) for pulse lasers.
+* Energy Weapon: Six options, 0 plus 3-7. A binary choice of type adds one to the factor if the type is fusion gun
 * Sand-Caster: eight possibilities (0, 3-9)
 * Repulsor: binary choice (0, 6)
 
