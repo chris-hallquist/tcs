@@ -15,18 +15,15 @@ Non-weapons tech:
 * Nuclear Damper: binary choice (0, 1); count limited to 1
 * Meson Screen: as Nuclear Damper
 * Jump Drive: should really be a binary choice of 0 or 3
-* Computers: 1-6, can't be 0 on fighting ships
+* Computers: Can't be 0 on fighting ships. 1-6 regular or fiberoptic, 1 or 2 bis.
+* Power plant: 1 to 50
+* Maneuver 1 to 6
+* Armor: 0 to Z, with some constraints based on hull config
 
-Tech options:
+Vehicles: ??? (This is a really complicated thing to handle)
 
-1. Particle Accelerator: 4, 8, E, L, Q
-2. Meson Gun: C, D, K
-3. Missile: 1-6, 8-9
-4. Laser: 1-8
-5. Energy Weapon: 1-8
-6. Sand-Caster: 3-9
-7. Repulsor: 6
-8. Nuclear Dampers: 1
-9. Meson Screens: 1
-10. Jump Drives: 1-3
-11. Computers: 1-6
+Tonnage: Tonnage code can range over 33 possible values, from 0 to Y. Within that range, can have between 0 and 99% of difference between that tonnage code and the next highest one, rounded to the nearest percent. No ship can be 0 tons. Tonnage code Y ships are assumed to be between 1,000,000 and 1,990,000 tons.
+
+Configuration: 9 possible values
+
+TODO: Drop tanks, crew, fuel, check standard ship types for anything you forgot
