@@ -26,4 +26,10 @@ Tonnage: Tonnage code can range over 33 possible values, from 0 to Y. Within tha
 
 Configuration: 9 possible values
 
-TODO: Drop tanks, crew, fuel, check standard ship types for anything you forgot
+Drop tanks and fuel are done as a percentage of tonnage. They can be infinitely fine tuned, but the final value is always rounded off to the nearest whole ton.
+
+Crew: calculate from other things
+
+Frozen Watch: Binary choice
+
+No bridge: binary choice, ignore if tonnage >= 100.
