@@ -1,6 +1,6 @@
 # Introduction
 
-This is code to play the classic tabletop RPG traveller, specifically the "Trillion Credit Squadron" tournament scenario.
+This is code to play the classic tabletop RPG Traveller, specifically the "Trillion Credit Squadron" tournament scenario.
 
 The project began life as a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/). However, after writing the game AI, I lost interest and never wrote the fleet-design AI, which was the interesting part. This was because I realized that the ways to game the tournament's rules were fairly obvious, and Douglas Lenant's wins in the 1981 and 1982 tournaments were most likely a matter of his (and his program Eurisko's) willingness to game the tournament rules, when other players took a more "roleplaying" attitude.
 
