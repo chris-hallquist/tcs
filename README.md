@@ -1,10 +1,16 @@
 # Introduction
 
-This is a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/), involving optimizing fleets for the science fiction roleplaying game Traveller. Historical background [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own). The stats for Lenat's winning fleet can be found [here](http://members.pcug.org.au/~davidjw/tavspecs/best_tml/Starships%20(HG)%20-%20Professor%20Lenat%20and%20EURISKO's%20Winning%20Fleet.htm).
+This is code to play the classic tabletop RPG traveller, specifically the "Trillion Credit Squadron" tournament scenario.
 
-At the moment, I'm essentially done writing the game code, and now beginning to write the machine learning part. Note that one thing which may never be finished is writing the code to support human players, as that's the focus of the project.
+The project began life as a machine learning / genetic algorithms project I originally proposed [here](http://lesswrong.com/lw/iwa/replicating_douglas_lenats_traveller_tcs_win_with/). However, after writing the game AI, I lost interest and never wrote the fleet-design AI, which was the interesting part. This was because I realized that the ways to game the tournament's rules were fairly obvious, and Douglas Lenant's wins in the 1981 and 1982 tournaments were most likely a matter of his (and his program Eurisko's) willingness to game the tournament rules, when other players took a more "roleplaying" attitude.
 
-I've begun a separate file for working out plans for the AI [here](AI-notes.md).
+(There's an interesting tangent I could go on here about the history of tabletop roleplaying games and how they differ philosophically from tabletop wargames, but it would feel out of place in a GitHub README.)
+
+Historical background about Traveller and Eurisko can be found [here](http://aliciapatterson.org/stories/eurisko-computer-mind-its-own). The stats for Lenat's winning fleet can be found [here](http://members.pcug.org.au/~davidjw/tavspecs/best_tml/Starships%20(HG)%20-%20Professor%20Lenat%20and%20EURISKO's%20Winning%20Fleet.htm).
+
+The support for human players unfinished, though I would be tickled if someone else were to write that part.
+
+I wrote some nodes for my plans for the AI [here](AI-notes.md).
 
 ## Rules Sources and Notes
 
